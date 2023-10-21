@@ -1,0 +1,47 @@
+--// Nurysium Helper Util
+local modules = {}
+
+local Players = game:GetService("Players")
+local rs = game:GetService("ReplicatedStorage")
+local ts = game:GetService("TweenService")
+local remotes = rs:WaitForChild("Remotes")
+local runService = game:GetService("RunService")
+
+function modules.getLocalEntity()
+   return Players.LocalPlayer
+end
+
+function modules.getAllPlayers()
+   return Players:GetPlayers()
+end
+
+function modules.getPing()
+   return game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+end
+
+function modules.getBallTarget()
+   for _, player in pairs(getAllPlayers()) do
+      if player ~= getLocalEntity() and player.Character.Parent == workspace.Alive and player.Character:FindFirstChildOfClass("Highlight") and player.Character:FindFirstChild("HumanoidRootPart") then
+         return player
+      end
+   end
+end
+
+function modules.Parry()
+   remotes:WaitForChild('ParryButtonPress'):Fire()
+end
+
+function modules.isAlive(Entity)
+   local char = Entity.Character
+   return char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0
+end
+
+function modules.getBall()
+   for _, RealBall in ipairs(workspace:WaitForChild("Balls"):GetChildren()) do
+      if RealBall:IsA("BasePart") and RealBall:GetAttribute("realBall") then
+         return RealBall
+      end
+   end
+end
+
+return modules;
