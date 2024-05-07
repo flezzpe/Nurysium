@@ -1,10 +1,7 @@
+--// Nurysium Helper Util
 local nurysium_module = {}
 
 local Players = game:GetService("Players")
-local rs = game:GetService("ReplicatedStorage")
-local ts = game:GetService("TweenService")
-local remotes = rs:WaitForChild("Remotes")
-local runService = game:GetService("RunService")
 
 function nurysium_module.getLocalEntity()
     return Players.LocalPlayer
