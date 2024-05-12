@@ -2,6 +2,11 @@ local nurysium_module = {}
 
 local Players = game:GetService("Players")
 
+local Services = {
+    game:GetService('AdService'),
+    game:GetService('SocialService')
+}
+
 function nurysium_module.isAlive(Entity)
     return Entity.Character and Entity.Character.Parent == workspace.Alive
 end
@@ -14,8 +19,10 @@ function nurysium_module.getBall()
     end
 end
 
+--// Thanks Aries for this.
+
 function nurysium_module.resolve_parry_Remote()
-    for _, value in services do
+    for _, value in Services do
         local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
     
         if not temp_remote then
