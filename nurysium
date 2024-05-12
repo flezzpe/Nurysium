@@ -1,4 +1,3 @@
---// Nurysium Helper Util
 local nurysium_module = {}
 
 local Players = game:GetService("Players")
