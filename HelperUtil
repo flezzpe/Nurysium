@@ -3,35 +3,31 @@ local nurysium_module = {}
 
 local Players = game:GetService("Players")
 
-function nurysium_module.getLocalEntity()
-    return Players.LocalPlayer
+function nurysium_module.isAlive(Entity)
+    return Entity.Character and Entity.Character.Parent == workspace.Alive
 end
 
-function nurysium_module.getAllPlayers()
-    return Players:GetPlayers()
-end
-
-function nurysium_module.getPing()
-    return game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
-end
-
-function nurysium_module.getCurrnetBallTarget()
-    for _, player in getAllPlayers() do
-        if player ~= getLocalEntity() and player.Character.Parent == workspace.Alive and player.Character:FindFirstChildOfClass("Highlight") and player.Character:FindFirstChild("HumanoidRootPart") then
-            return player
+function nurysium_module.getBall()
+    for index, ball in workspace:WaitForChild("Balls"):GetChildren() do
+        if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
+            return ball
         end
     end
 end
 
-function nurysium_module.isAlive(Entity)
-    return Entity.Character and Entity.Character:FindFirstChild("Humanoid") and Entity.Character.Humanoid.Health > 0
-end
-
-function nurysium_module.getBall()
-    for index, ball in ipairs(workspace:WaitForChild("Balls"):GetChildren()) do
-        if ball:IsA("BasePart") and ball:GetAttribute("realBall") then
-            return ball
+function nurysium_module.resolve_parry_Remote()
+    for _, value in services do
+        local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
+    
+        if not temp_remote then
+            continue
         end
+    
+        if not temp_remote.Name:find('\n') then
+            continue
+        end
+    
+        parry_remote = temp_remote
     end
 end
 
