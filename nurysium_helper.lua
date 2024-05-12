@@ -33,7 +33,7 @@ function nurysium_module.resolve_parry_Remote()
             continue
         end
     
-        parry_remote = temp_remote
+        return temp_remote
     end
 end
 
