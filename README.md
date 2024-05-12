@@ -3,5 +3,6 @@
 ## [Discord](https://dsc.gg/nurysium) ✨
 
 
-https://github.com/flezzpe/Nurysium/assets/98888240/dca76eb9-e410-4e95-bc6e-43e23bf85200
+
+https://github.com/flezzpe/Nurysium/assets/98888240/99675828-2250-486c-a744-2e79c0d3e323
 
