@@ -19,10 +19,7 @@ local function animate_elements(speed: number)
 end
 
 function nurysium: init(name: string, is_draggable: boolean, parent)
-    if parent:FindFirstChild(name) then
-        parent:FindFirstChild(name):Destroy()
-    end
-
+    warn("init")
     ui = Instance.new("ScreenGui")
     
     local Background = Instance.new("Frame")
@@ -46,6 +43,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     local Bar = Instance.new("TextBox")
     local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
     local UIGradient_4 = Instance.new("UIGradient")
+
+    warn("created.")
 
     ui.Name = name
     ui.Parent = parent
@@ -193,6 +192,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Bar.TextTransparency = 0.450
     Bar.TextWrapped = true
     Bar.TextXAlignment = Enum.TextXAlignment.Left
+
+    warn("done")
     
     local function bar_handler()
         local script = Instance.new('LocalScript', Bar)
