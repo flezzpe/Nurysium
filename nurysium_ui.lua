@@ -239,7 +239,64 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     
     task.defer(function()
         if is_draggable then
-            
+            local function WOFUCY_fake_script() -- Background.drag 
+                local script = Instance.new('LocalScript', Background)
+
+                local UserInputService = game:GetService("UserInputService")
+                local runService = (game:GetService("RunService"));
+
+                local gui = script.Parent
+
+                local dragging
+                local dragInput
+                local dragStart
+                local startPos
+
+                function Lerp(a, b, m)
+                    return a + (b - a) * m
+                end;
+
+                local lastMousePos
+                local lastGoalPos
+                local DRAG_SPEED = (8);
+                function Update(dt)
+                    if not (startPos) then return end;
+                    if not (dragging) and (lastGoalPos) then
+                        gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
+                        return 
+                    end;
+
+                    local delta = (lastMousePos - UserInputService:GetMouseLocation())
+                    local xGoal = (startPos.X.Offset - delta.X);
+                    local yGoal = (startPos.Y.Offset - delta.Y);
+                    lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
+                    gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
+                end;
+
+                gui.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                        dragging = true
+                        dragStart = input.Position
+                        startPos = gui.Position
+                        lastMousePos = UserInputService:GetMouseLocation()
+
+                        input.Changed:Connect(function()
+                            if input.UserInputState == Enum.UserInputState.End then
+                                dragging = false
+                            end
+                        end)
+                    end
+                end)
+
+                gui.InputChanged:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                        dragInput = input
+                    end
+                end)
+
+                runService.Heartbeat:Connect(Update)
+            end
+            coroutine.wrap(WOFUCY_fake_script)()
         end
     end)
 end
@@ -300,8 +357,40 @@ function nurysium: create_section(name: string, imageID: string)
             end
             
         end
-        
-        print(ui_data.current_section)
+    end)
+
+    Example.TouchTap:Connect(function()
+        ui_data.current_section = Example.Text
+
+        for _, section in ui.Background.Sections.real_sections:GetChildren() do
+
+            if section:IsA("TextButton") then
+                if section.Text:match(name) then
+
+                    local click_sound = Instance.new("Sound", game:GetService("SoundService"))
+
+                    click_sound.SoundId = "rbxassetid://6895079853"
+                    click_sound:Play()
+
+                    animate_elements(1.65)
+
+                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0}):Play()
+
+                    if section.Text:match("Settings") then
+                        tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 90}):Play()
+
+                        task.delay(4, function()
+                            tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 0}):Play()
+                        end)
+                    end
+                else
+                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0.45}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0.45}):Play()
+                end
+            end
+
+        end
     end)
 
     ImageLabel.Parent = Example
@@ -463,6 +552,47 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
                 Color = Color3.fromRGB(40, 39, 45)
             }):Play()
             
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Color3.fromRGB(27, 24, 35)
+            }):Play()
+        end
+    end)
+
+    Hitbox.TouchTap:Connect(function()
+        toggled = not toggled
+        callback(toggled)
+
+        if toggled then
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                Position = UDim2.new(0.600, 0, 0.224, 0),
+                BackgroundColor3 = Color3.fromRGB(124, 120, 218)
+            }):Play()
+
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                Transparency = 0.5,
+                Color = Color3.fromRGB(59, 58, 151)
+            }):Play()
+
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Color3.fromRGB(62, 61, 174)
+            }):Play()
+
+        else
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                Position = UDim2.new(0.149, 0, 0.224, 0)
+            }):Play()
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Color3.fromRGB(37, 35, 48)
+            }):Play()
+
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+                Transparency = 0,
+                Color = Color3.fromRGB(40, 39, 45)
+            }):Play()
+
             tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(27, 24, 35)
             }):Play()
