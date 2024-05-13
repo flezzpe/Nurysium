@@ -19,6 +19,8 @@ local function animate_elements(speed: number)
 end
 
 function nurysium: init(name: string, is_draggable: boolean, parent)
+    warn("init")
+
     ui = Instance.new("ScreenGui")
     
     local Background = Instance.new("Frame")
