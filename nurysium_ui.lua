@@ -19,7 +19,10 @@ local function animate_elements(speed: number)
 end
 
 function nurysium: init(name: string, is_draggable: boolean, parent)
-    warn("init")
+    if parent:FindFirstChild(name) then
+        parent:FindFirstChild(name):Destroy()
+    end
+
     ui = Instance.new("ScreenGui")
     
     local Background = Instance.new("Frame")
@@ -43,8 +46,6 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     local Bar = Instance.new("TextBox")
     local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
     local UIGradient_4 = Instance.new("UIGradient")
-
-    warn("created.")
 
     ui.Name = name
     ui.Parent = parent
@@ -125,7 +126,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Title.BorderSizePixel = 0
     Title.Position = UDim2.new(0.0269060303, 0, 0.035999544, 0)
     Title.Size = UDim2.new(0, 70, 0, 20)
-    Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+    Title.Font = game:GetObjects('rbxassetid://11702779517')[1]
     Title.Text = name
     Title.TextColor3 = Color3.fromRGB(231, 231, 243)
     Title.TextScaled = true
@@ -184,7 +185,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Bar.SizeConstraint = Enum.SizeConstraint.RelativeXX
     Bar.ZIndex = 7
     Bar.ClearTextOnFocus = false
-    Bar.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+    Bar.Font = game:GetObjects('rbxassetid://11702779517')[1]
     Bar.PlaceholderText = "Search"
     Bar.Text = ""
     Bar.TextColor3 = Color3.fromRGB(231, 231, 243)
@@ -192,8 +193,6 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Bar.TextTransparency = 0.450
     Bar.TextWrapped = true
     Bar.TextXAlignment = Enum.TextXAlignment.Left
-
-    warn("done")
     
     local function bar_handler()
         local script = Instance.new('LocalScript', Bar)
@@ -315,7 +314,7 @@ function nurysium: create_section(name: string, imageID: string)
     Example.BorderSizePixel = 0
     Example.Size = UDim2.new(0, 85, 0, 16)
     Example.ZIndex = 6
-    Example.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+    Example.Font = game:GetObjects('rbxassetid://11702779517')[1]
     Example.Text = name
     Example.TextColor3 = Color3.fromRGB(231, 231, 243)
     Example.TextScaled = true
@@ -473,7 +472,7 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
     Title.Position = UDim2.new(0.0449240729, 0, 0.275129884, 0)
     Title.Size = UDim2.new(0, 140, 0, 20)
     Title.ZIndex = 10
-    Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+    Title.Font = game:GetObjects('rbxassetid://11702779517')[1]
     Title.Text = name
     Title.TextColor3 = Color3.fromRGB(231, 231, 243)
     Title.TextScaled = true
