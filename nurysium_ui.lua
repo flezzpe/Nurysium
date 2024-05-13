@@ -19,6 +19,10 @@ local function animate_elements(speed: number)
 end
 
 function nurysium: init(name: string, is_draggable: boolean, parent)
+    if parent:FindFirstChild(name) then
+        parent:FindFirstChild(name):Destroy()
+    end
+    
     warn("init")
 
     ui = Instance.new("ScreenGui")
