@@ -19,22 +19,4 @@ function nurysium_module.getBall()
     end
 end
 
---// Thanks Aries for this.
-
-function nurysium_module.resolve_parry_Remote()
-    for _, value in Services do
-        local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
-    
-        if not temp_remote then
-            continue
-        end
-    
-        if not temp_remote.Name:find('\n') then
-            continue
-        end
-    
-        return temp_remote
-    end
-end
-
 return nurysium_module;
