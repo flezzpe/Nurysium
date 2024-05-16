@@ -1,6 +1,10 @@
 --// nurysium recode
 
-print('nurysium recode - Nurysium llc.')
+local version = '0.2.02'
+
+print('nurysium llc. - https://dsc.gg/nurysium')
+print(version)
+
 setfpscap(165)
 
 local Stats = game:GetService('Stats')
@@ -230,7 +234,7 @@ task.spawn(function()
         end
     end)
 
-    RunService.Heartbeat:Connect(function()
+    RunService.PreRender:Connect(function()
         if not getgenv().aura_Enabled then
             return
         end
@@ -281,12 +285,12 @@ task.spawn(function()
         aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 3.5, 9.5)
         aura_table.is_Spamming = aura_table.hit_Count > 1 or ball_Distance < 13.5
 
-        if ball_Dot < -0.2 then
+        if ball_Dot < -0.15 then
             aura_table.ball_Warping = tick()
         end
 
         task.spawn(function()
-            if (tick() - aura_table.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance <= 10 then
+            if (tick() - aura_table.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance <= 12 then
                 aura_table.is_ball_Warping = false
 
                 return
@@ -315,7 +319,7 @@ task.spawn(function()
 
         task.spawn(function()
             repeat
-                RunService.Heartbeat:Wait()
+                RunService.PreRender:Wait()
             until (tick() - aura_table.hit_Time) >= 1
                 aura_table.canParry = true
         end)
