@@ -8,7 +8,7 @@ local Services = {
 }
 
 function nurysium_module.isAlive(Entity)
-    return Entity.Character and Entity.Character.Parent == workspace.Alive
+    return Entity.Character and workspace.Alive:FindFirstChild(Entity.Name) and workspace.Alive:FindFirstChild(Entity.Name).Humanoid.Health > 0
 end
 
 function nurysium_module.getBall()
