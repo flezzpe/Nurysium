@@ -35,7 +35,7 @@ function nurysium: open()
 
     tween_service:Create(ui.Background, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
         Size = UDim2.new(0, 655, 0, 325),
-        Position = UDim2.new(0.388, 0, 0.294, 0),
+        Position = UDim2.new(0.4, 0, 0.3, 0),
         BackgroundTransparency = 0
     }):Play()
 end
@@ -101,7 +101,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Background.BorderSizePixel = 0
-    Background.Position = UDim2.new(0.388, 0, 0.294, 0)
+    Background.Position = UDim2.new(0.4, 0, 0.3, 0)
     Background.Size = UDim2.new(0, 655, 0, 325)
     Background.ZIndex = 5
 
@@ -185,6 +185,22 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     UIGradient.Rotation = -113
     UIGradient.Parent = Title
     
+    Background.TouchLongPress:Connect(function()
+        if not ui.Enabled then
+            nurysium:open()
+
+            task.delay(0.15, function()
+                ui.Enabled = true
+            end)
+        else
+            nurysium:close()
+
+            task.delay(1, function()
+                ui.Enabled = false
+            end)
+        end
+    end)
+
     local function gradientMover()
         local script = Instance.new('LocalScript', UIGradient)
         local animation_done = true
