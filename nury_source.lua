@@ -29,6 +29,7 @@ getgenv().hit_effect_Enabled = false
 getgenv().night_mode_Enabled = false
 getgenv().trail_Enabled = false
 getgenv().self_effect_Enabled = false
+getgenv().kill_effect_Enabled = false
 
 local Services = {
     game:GetService('AdService'),
@@ -158,6 +159,83 @@ library:create_toggle("Trail", "World", function(toggled)
     getgenv().trail_Enabled = toggled
 end)
 
+library:create_toggle("Self Effect", "World", function(toggled)
+    getgenv().self_effect_Enabled = toggled
+end)
+
+library:create_toggle("Kill Effect", "World", function(toggled)
+    getgenv().kill_effect_Enabled = toggled
+end)
+
+--// kill effect
+
+function play_kill_effect(Part)
+    task.defer(function()
+        local bell = game:GetObjects("rbxassetid://17519762269")[1]
+
+        bell.Name = 'Yeat_BELL'
+        bell.Parent = workspace
+
+        bell.Position = Part.Position - Vector3.new(0, 20, 0)
+        bell:WaitForChild('Sound'):Play()
+
+        game:GetService("TweenService"):Create(bell, TweenInfo.new(0.85, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+            Position = Part.Position + Vector3.new(0, 10, 0)
+        }):Play()
+
+        task.delay(5, function()
+            game:GetService("TweenService"):Create(bell, TweenInfo.new(1.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+                Position = Part.Position + Vector3.new(0, 100, 0)
+            }):Play()
+        end)
+
+        task.delay(6, function()
+            bell:Destroy()
+        end)
+    end)
+end
+
+task.defer(function()
+    workspace.Alive.ChildRemoved:Connect(function(child)
+        if not workspace.Dead:FindFirstChild(child.Name) then
+            return
+        end
+
+        if getgenv().kill_effect_Enabled then
+            play_kill_effect(child.HumanoidRootPart)
+        end
+    end)
+end)
+
+--// self effect
+
+task.defer(function()
+    game:GetService("RunService").Heartbeat:Connect(function()
+
+        if not local_player.Character then
+            return
+        end
+
+        if getgenv().self_effect_Enabled then
+            local effect = game:GetObjects("rbxassetid://17519530107")[1]
+
+            effect.Name = 'nurysium_efx'
+
+            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
+                return
+            end
+            
+            effect.Parent = local_player.Character.PrimaryPart
+        else
+            
+            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
+                local_player.Character.PrimaryPart['nurysium_efx']:Destroy()
+            end
+        end
+
+    end)
+end)
+
 --// trail
 
 task.defer(function()
@@ -285,12 +363,12 @@ task.spawn(function()
         aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 3.5, 9.5)
         aura_table.is_Spamming = aura_table.hit_Count > 1 or ball_Distance < 13.5
 
-        if ball_Dot < -0.15 then
+        if ball_Dot < 0 then
             aura_table.ball_Warping = tick()
         end
 
         task.spawn(function()
-            if (tick() - aura_table.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance <= 12 then
+            if (tick() - aura_table.ball_Warping) >= 0.25 + target_distance_Limited - ball_speed_Limited or ball_Distance <= 12 then
                 aura_table.is_ball_Warping = false
 
                 return
@@ -302,7 +380,7 @@ task.spawn(function()
         if ball_Distance <= aura_table.parry_Range and not aura_table.is_Spamming and not aura_table.is_ball_Warping then
             parry_remote:FireServer(
                 0.5,
-                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(0, 100), math.random(0, 1000), math.random(100, 1000))),
+                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(-1000, 100))),
                 {[closest_Entity.Name] = target_Position},
                 {target_Position.X, target_Position.Y},
                 false
