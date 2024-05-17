@@ -18,15 +18,58 @@ local function animate_elements(speed: number)
     }):Play()
 end
 
+function nurysium: open()
+    task.delay(0.65, function()
+        ui.Background["functions_frame"].Visible = true
+        ui.Background.Sections.Visible = true
+        ui.Background.Search.Visible = true
+    end)
+
+    tween_service:Create(ui.Background["functions_frame"].UIListLayout, TweenInfo.new(2, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        Padding = UDim.new(0.02, 0)
+    }):Play()
+
+    tween_service:Create(ui.Background.Title, TweenInfo.new(1.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        TextTransparency = 0
+    }):Play()
+
+    tween_service:Create(ui.Background, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        Size = UDim2.new(0, 655, 0, 325),
+        Position = UDim2.new(0.388, 0, 0.294, 0),
+        BackgroundTransparency = 0
+    }):Play()
+end
+
+
+function nurysium: close()
+    task.delay(0.35, function()
+        ui.Background["functions_frame"].Visible = false
+        ui.Background.Sections.Visible = false
+        ui.Background.Search.Visible = false
+    end)
+
+    tween_service:Create(ui.Background["functions_frame"].UIListLayout, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        Padding = UDim.new(0.02, 0)
+    }):Play()
+
+    tween_service:Create(ui.Background.Title, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        TextTransparency = 1
+    }):Play()
+
+    tween_service:Create(ui.Background, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.510, 0, 1, 0),
+        BackgroundTransparency = 1
+    }):Play()
+end
+
 function nurysium: init(name: string, is_draggable: boolean, parent)
     if parent:FindFirstChild(name) then
         parent:FindFirstChild(name):Destroy()
     end
-    
-    warn("init")
 
     ui = Instance.new("ScreenGui")
-    
+
     local Background = Instance.new("Frame")
     local UICorner = Instance.new("UICorner")
     local Sections = Instance.new("Frame")
@@ -58,7 +101,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Background.BorderSizePixel = 0
-    Background.Position = UDim2.new(0, 113, 0, 29)
+    Background.Position = UDim2.new(0.388, 0, 0.294, 0)
     Background.Size = UDim2.new(0, 655, 0, 325)
     Background.ZIndex = 5
 
@@ -135,6 +178,53 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Title.TextSize = 14.000
     Title.TextWrapped = true
 
+    local UIGradient = Instance.new("UIGradient")
+
+    UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(141, 130, 170)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(208, 196, 252))}
+    UIGradient.Offset = Vector2.new(0.00999999978, 0)
+    UIGradient.Rotation = -113
+    UIGradient.Parent = Title
+    
+    Background.TouchLongPress:Connect(function()
+        if not ui.Enabled then
+            nurysium:open()
+
+            task.delay(0.15, function()
+                ui.Enabled = true
+            end)
+        else
+            nurysium:close()
+
+            task.delay(1, function()
+                ui.Enabled = false
+            end)
+        end
+    end)
+
+    local function gradientMover()
+        local script = Instance.new('LocalScript', UIGradient)
+        local animation_done = true
+
+        while animation_done do
+            animation_done = false
+
+            game:GetService('TweenService'):Create(UIGradient, TweenInfo.new(3, Enum.EasingStyle.Quad), {
+                Rotation = 53
+            }):Play()
+
+            task.wait(3)
+
+            game:GetService('TweenService'):Create(UIGradient, TweenInfo.new(3, Enum.EasingStyle.Quad), {
+                Rotation = -180
+            }):Play()
+
+            task.wait(3)
+            animation_done = true
+        end
+        
+    end
+    coroutine.wrap(gradientMover)()
+
     functions_frame.Name = "functions_frame"
     functions_frame.Parent = Background
     functions_frame.Active = true
@@ -195,36 +285,36 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Bar.TextTransparency = 0.450
     Bar.TextWrapped = true
     Bar.TextXAlignment = Enum.TextXAlignment.Left
-    
+
     local function bar_handler()
         local script = Instance.new('LocalScript', Bar)
 
         Bar:GetPropertyChangedSignal("Text"):Connect(function()
             if Bar.Text:len() > 1 then
                 animate_elements(1.35)
-                
+
                 for _, element in functions_frame:GetDescendants() do
-                    
+
                     if element:IsA("Frame") and element:FindFirstChild("Title") then
-                        
+
                         if string.find(element.Title.Text:lower(), Bar.Text:lower()) then
                             table.insert(search_table, element.Name)
                         else
-                            
+
                             if table.find(search_table, element.Name) then
                                 table.remove(search_table, table.find(search_table, element.Name))
                             end
-                            
+
                         end
                     end
-                    
+
                 end
             else
                 table.clear(search_table)
             end
         end)
     end
-    
+
     coroutine.wrap(bar_handler)()
 
     UIAspectRatioConstraint.Parent = Background
@@ -233,12 +323,12 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     UIGradient_4.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(30, 28, 39)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(24, 22, 31))}
     UIGradient_4.Rotation = -113
     UIGradient_4.Parent = Background
-    
-    tween_service:Create(UIAspectRatioConstraint, TweenInfo.new(1.65, Enum.EasingStyle.Quart), {AspectRatio = 1.850}):Play()
+
+    tween_service:Create(UIAspectRatioConstraint, TweenInfo.new(1.65, Enum.EasingStyle.Exponential), {AspectRatio = 1.850}):Play()
     task.delay(0.25, function()
-        tween_service:Create(Title, TweenInfo.new(1.85, Enum.EasingStyle.Quart), {TextTransparency = 0}):Play()
+        tween_service:Create(Title, TweenInfo.new(1.85, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
     end)
-    
+
     task.defer(function()
         if is_draggable then
             local function WOFUCY_fake_script() -- Background.drag 
@@ -254,14 +344,15 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
                 local dragStart
                 local startPos
 
-                function Lerp(a, b, m)
+                local function Lerp(a, b, m)
                     return a + (b - a) * m
                 end;
 
                 local lastMousePos
                 local lastGoalPos
-                local DRAG_SPEED = (8);
-                function Update(dt)
+                local DRAG_SPEED = (9);
+
+                local function Update(dt)
                     if not (startPos) then return end;
                     if not (dragging) and (lastGoalPos) then
                         gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
@@ -298,14 +389,36 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
                 runService.Heartbeat:Connect(Update)
             end
+
             coroutine.wrap(WOFUCY_fake_script)()
         end
     end)
+
+    task.defer(function()
+        user_input.InputEnded:Connect(function(input, is_event)
+            if not is_event and (input.KeyCode == Enum.KeyCode.RightShift or input.KeyCode == Enum.KeyCode.Insert)  then
+
+                if not ui.Enabled then
+                    nurysium:open()
+
+                    task.delay(0.15, function()
+                        ui.Enabled = true
+                    end)
+                else
+                    nurysium:close()
+
+                    task.delay(1, function()
+                        ui.Enabled = false
+                    end)
+                end
+            end
+        end)
+    end)
 end
 
-function nurysium: create_section(name: string, imageID: string)
+function nurysium: create_section(name: string, imageID: number)
     task.wait(0.5)
-    
+
     local Example = Instance.new("TextButton", ui.Background.Sections.real_sections)
     local ImageLabel = Instance.new("ImageLabel")
 
@@ -324,40 +437,33 @@ function nurysium: create_section(name: string, imageID: string)
     Example.TextWrapped = true
     Example.TextTransparency = 1
     Example.TextXAlignment = Enum.TextXAlignment.Left
-    
-    tween_service:Create(Example, TweenInfo.new(1.35, Enum.EasingStyle.Quart), {TextTransparency = 0.45}):Play()
 
-    Example.MouseButton1Down:Connect(function()
+    tween_service:Create(Example, TweenInfo.new(1.35, Enum.EasingStyle.Exponential), {TextTransparency = 0.45}):Play()
+
+    Example.MouseButton1Up:Connect(function()
         ui_data.current_section = Example.Text
-        
+
         for _, section in ui.Background.Sections.real_sections:GetChildren() do
-            
+
             if section:IsA("TextButton") then
                 if section.Text:match(name) then
-                    
+
                     local click_sound = Instance.new("Sound", game:GetService("SoundService"))
-                    
+
                     click_sound.SoundId = "rbxassetid://6895079853"
                     click_sound:Play()
-                    
+
                     animate_elements(1.65)
                     
-                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0}):Play()
-                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0}):Play()
-                    
-                    if section.Text:match("Settings") then
-                        tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 90}):Play()
-                        
-                        task.delay(4, function()
-                            tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 0}):Play()
-                        end)
-                    end
+                    tween_service:Create(section, TweenInfo.new(0.65, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.65, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
+
                 else
-                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0.45}):Play()
-                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0.45}):Play()
+                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {TextTransparency = 0.45}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {ImageTransparency = 0.45}):Play()
                 end
             end
-            
+
         end
     end)
 
@@ -376,19 +482,19 @@ function nurysium: create_section(name: string, imageID: string)
 
                     animate_elements(1.65)
 
-                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0}):Play()
-                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0}):Play()
+                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {ImageTransparency = 0}):Play()
 
                     if section.Text:match("Settings") then
-                        tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 90}):Play()
+                        tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Exponential), {Rotation = 90}):Play()
 
                         task.delay(4, function()
-                            tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Quart), {Rotation = 0}):Play()
+                            tween_service:Create(section.ImageLabel, TweenInfo.new(1.45, Enum.EasingStyle.Exponential), {Rotation = 0}):Play()
                         end)
                     end
                 else
-                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {TextTransparency = 0.45}):Play()
-                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Quart), {ImageTransparency = 0.45}):Play()
+                    tween_service:Create(section, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {TextTransparency = 0.45}):Play()
+                    tween_service:Create(section.ImageLabel, TweenInfo.new(0.45, Enum.EasingStyle.Exponential), {ImageTransparency = 0.45}):Play()
                 end
             end
 
@@ -405,16 +511,16 @@ function nurysium: create_section(name: string, imageID: string)
     ImageLabel.ZIndex = 6
     ImageLabel.ImageTransparency = 1
     ImageLabel.Image = `rbxassetid://{imageID}`
-    
-    tween_service:Create(ImageLabel, TweenInfo.new(3, Enum.EasingStyle.Quart), {ImageTransparency = 0.45}):Play()
+
+    tween_service:Create(ImageLabel, TweenInfo.new(3, Enum.EasingStyle.Exponential), {ImageTransparency = 0.45}):Play()
 end
 
 function nurysium: create_toggle(name: string, section_name: string, callback)
-    task.wait(0.25)
-   
+    task.wait(0.15)
+
     callback = callback or function() end
     local toggled = false
-    
+
     local Example = Instance.new("Frame")
     local UICorner = Instance.new("UICorner")
     local UIStroke = Instance.new("UIStroke")
@@ -510,7 +616,7 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 
     UICorner_3.CornerRadius = UDim.new(0, 10)
     UICorner_3.Parent = Toggle
-    
+
     game:GetService("RunService").Heartbeat:Connect(function()
         if not section_name:match(ui_data.current_section) and not table.find(search_table, name)then
             Example.Visible = false
@@ -518,43 +624,44 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
             Example.Visible = true
         end
     end)
-    
+
     Hitbox.MouseButton1Up:Connect(function()
         toggled = not toggled
+
         callback(toggled)
-        
+
         if toggled then
-            
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Position = UDim2.new(0.600, 0, 0.224, 0),
                 BackgroundColor3 = Color3.fromRGB(124, 120, 218)
             }):Play()
-            
-            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Transparency = 0.5,
                 Color = Color3.fromRGB(59, 58, 151)
             }):Play()
-            
-            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(62, 61, 174)
             }):Play()
-            
+
         else
-            
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Position = UDim2.new(0.149, 0, 0.224, 0)
             }):Play()
-            
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(37, 35, 48)
             }):Play()
-            
-            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Transparency = 0,
                 Color = Color3.fromRGB(40, 39, 45)
             }):Play()
-            
-            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(27, 24, 35)
             }):Play()
         end
@@ -562,40 +669,41 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 
     Hitbox.TouchTap:Connect(function()
         toggled = not toggled
+
         callback(toggled)
 
         if toggled then
 
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Position = UDim2.new(0.600, 0, 0.224, 0),
                 BackgroundColor3 = Color3.fromRGB(124, 120, 218)
             }):Play()
 
-            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Transparency = 0.5,
                 Color = Color3.fromRGB(59, 58, 151)
             }):Play()
 
-            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(62, 61, 174)
             }):Play()
 
         else
 
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Position = UDim2.new(0.149, 0, 0.224, 0)
             }):Play()
 
-            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(37, 35, 48)
             }):Play()
 
-            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Transparency = 0,
                 Color = Color3.fromRGB(40, 39, 45)
             }):Play()
 
-            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut), {
+            tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 BackgroundColor3 = Color3.fromRGB(27, 24, 35)
             }):Play()
         end
