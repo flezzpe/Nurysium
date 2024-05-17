@@ -76,6 +76,14 @@ local function get_closest_entity(Object: Part)
     end)
 end
 
+local function get_distance_to_center()
+    for _, object in workspace.Map:GetDescendants() do
+        if object.Name == 'BALLSPAWN' then
+            return local_player:DistanceFromCharacter(object.Position)
+        end
+    end
+end
+
 --// Thanks Aries for this.
 function resolve_parry_Remote()
     for _, value in Services do
@@ -132,12 +140,6 @@ ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
     end)
 end)
 
-workspace:WaitForChild("Balls").ChildRemoved:Connect(function(child)
-    aura_table.hit_Count = 0
-    aura_table.is_ball_Warping = false
-    aura_table.is_Spamming = false
-end)
-
 library:create_toggle("Attack Aura", "Combat", function(toggled)
     resolve_parry_Remote()
     getgenv().aura_Enabled = toggled
@@ -184,7 +186,7 @@ function play_kill_effect(Part)
         }):Play()
 
         task.delay(5, function()
-            game:GetService("TweenService"):Create(bell, TweenInfo.new(1.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+            game:GetService("TweenService"):Create(bell, TweenInfo.new(1.75, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
                 Position = Part.Position + Vector3.new(0, 100, 0)
             }):Play()
         end)
@@ -197,7 +199,7 @@ end
 
 task.defer(function()
     workspace.Alive.ChildRemoved:Connect(function(child)
-        if not workspace.Dead:FindFirstChild(child.Name) then
+        if not workspace.Dead:FindFirstChild(child.Name) and child ~= local_player.Character then
             return
         end
 
@@ -294,7 +296,7 @@ task.spawn(function()
         end
 
         if closest_Entity then
-            if workspace.Alive:FindFirstChild(closest_Entity.Name) and workspace.Alive:FindFirstChild(closest_Entity.Name).Humanoid.Health > 0 then
+            if workspace.Alive:FindFirstChild(closest_Entity.Name) then
                 if aura_table.is_Spamming then
                     if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura_table.spam_Range then   
 
@@ -310,6 +312,13 @@ task.spawn(function()
                 end
             end
         end
+    end)
+
+    workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
+        aura_table.hit_Count = 0
+        aura_table.is_ball_Warping = false
+        aura_table.is_Spamming = false
+        aura_table.canParry = true
     end)
 
     RunService.PreRender:Connect(function()
@@ -335,6 +344,8 @@ task.spawn(function()
         get_closest_entity(local_player.Character.PrimaryPart)
 
         local player_Position = local_player.Character.PrimaryPart.Position
+        local player_Velocity = local_player.Character.HumanoidRootPart.AssemblyLinearVelocity
+        local player_isMoving = player_Velocity.Magnitude > 0
 
         local ball_Position = self.Position
         local ball_Velocity = self.AssemblyLinearVelocity
@@ -359,16 +370,27 @@ task.spawn(function()
         local target_isMoving = target_Velocity.Magnitude > 0
         local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
-        aura_table.spam_Range = math.max(ping / 10, 15) + ball_Speed / 7
-        aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 3.5, 9.5)
+        if target_isMoving or player_isMoving then
+
+            if player_isMoving then
+                aura_table.parry_Range = math.max(math.max(ping, 5.5) + ball_Speed / 4.5, 9.5)
+            else
+                aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 4.5, 9.5)
+            end
+
+            aura_table.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7
+        else
+            aura_table.spam_Range = math.max(ping / 10, 15) + ball_Speed / 7
+        end
+
         aura_table.is_Spamming = aura_table.hit_Count > 1 or ball_Distance < 13.5
 
-        if ball_Dot < 0 then
+        if ball_Dot < -0.2 then
             aura_table.ball_Warping = tick()
         end
 
         task.spawn(function()
-            if (tick() - aura_table.ball_Warping) >= 0.25 + target_distance_Limited - ball_speed_Limited or ball_Distance <= 12 then
+            if (tick() - aura_table.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 10 then
                 aura_table.is_ball_Warping = false
 
                 return
@@ -376,7 +398,7 @@ task.spawn(function()
 
             aura_table.is_ball_Warping = true
         end)
-
+        
         if ball_Distance <= aura_table.parry_Range and not aura_table.is_Spamming and not aura_table.is_ball_Warping then
             parry_remote:FireServer(
                 0.5,
