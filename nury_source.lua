@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.2'
+local version = '0.2.3'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -38,7 +38,7 @@ local Services = {
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/flezzpe/Nurysium/main/nurysium_ui.lua"))()
 task.wait(0.5)
 
-library:init("nurysium", true, game:GetService("CoreGui"))
+library:init("nurysium", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
 
 library:create_section("Combat", 17440545793)
 library:create_section("World", 17440865331)
