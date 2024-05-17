@@ -184,22 +184,6 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     UIGradient.Offset = Vector2.new(0.00999999978, 0)
     UIGradient.Rotation = -113
     UIGradient.Parent = Title
-    
-    Background.TouchLongPress:Connect(function()
-        if not ui.Enabled then
-            nurysium:open()
-
-            task.delay(0.15, function()
-                ui.Enabled = true
-            end)
-        else
-            nurysium:close()
-
-            task.delay(1, function()
-                ui.Enabled = false
-            end)
-        end
-    end)
 
     local function gradientMover()
         local script = Instance.new('LocalScript', UIGradient)
