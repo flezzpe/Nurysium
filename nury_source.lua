@@ -137,7 +137,7 @@ workspace:WaitForChild("Balls").ChildRemoved:Connect(function(child)
     aura_table.is_Spamming = false
 end)
 
-library:create_toggle("Aura", "Combat", function(toggled)
+library:create_toggle("Attack Aura", "Combat", function(toggled)
     resolve_parry_Remote()
     getgenv().aura_Enabled = toggled
 end)
