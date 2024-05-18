@@ -172,10 +172,20 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Title.Position = UDim2.new(0.0269060303, 0, 0.035999544, 0)
     Title.Size = UDim2.new(0, 70, 0, 20)
     Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
-    Title.Text = name
-    Title.TextColor3 = Color3.fromRGB(231, 231, 243)
-    Title.TextScaled = true
+
     Title.TextSize = 14.000
+    
+    task.defer(function()
+        while task.wait(60) do
+            Title.Text = name
+            Title.TextScaled = true
+            task.wait(40)
+            Title.TextScaled = true
+            Title.Text = 'https://dsc.gg/nurysium'
+        end
+    end)
+    
+    Title.TextColor3 = Color3.fromRGB(231, 231, 243)
     Title.TextWrapped = true
 
     local UIGradient = Instance.new("UIGradient")
