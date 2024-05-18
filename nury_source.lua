@@ -402,9 +402,9 @@ task.spawn(function()
             aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.5
 
             if player_isMoving then
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 6.5, 9.5)
-            else
                 aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 5.5, 9.5)
+            else
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.5, 9.5)
             end
 
         else
