@@ -174,6 +174,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
 
     Title.TextSize = 14.000
+    Title.Text = name
+    Title.TextScaled = true
 
     -- No, I wrote that script myself, why are you trying to find those lines 😄? 
     task.defer(function()
