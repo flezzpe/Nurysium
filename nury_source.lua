@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.5'
+local version = '0.2.6'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -102,45 +102,6 @@ function resolve_parry_Remote()
     end
 end
 
-local aura_table = {
-    canParry = true,
-    is_Spamming = false,
-
-    parry_Range = 0,
-    spam_Range = 0,  
-    hit_Count = 0,
-
-    hit_Time = tick(),
-    ball_Warping = tick(),
-    is_ball_Warping = false
-}
-
-ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
-    if getgenv().hit_sound_Enabled then
-        hit_Sound:Play()
-    end
-
-    if getgenv().hit_effect_Enabled then
-        local hit_effect = game:GetObjects("rbxassetid://17407244385")[1]
-
-        hit_effect.Parent = Nurysium_Util.getBall()
-        hit_effect:Emit(3)
-        
-        task.delay(5, function()
-            hit_effect:Destroy()
-        end)
-
-    end
-end)
-
-ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
-    aura_table.hit_Count += 1
-
-    task.delay(0.15, function()
-        aura_table.hit_Count -= 1
-    end)
-end)
-
 library:create_toggle("Attack Aura", "Combat", function(toggled)
     resolve_parry_Remote()
     getgenv().aura_Enabled = toggled
@@ -204,7 +165,7 @@ end
 
 task.defer(function()
     workspace.Alive.ChildRemoved:Connect(function(child)
-        if not workspace.Dead:FindFirstChild(child.Name) and child ~= local_player.Character then
+        if not workspace.Dead:FindFirstChild(child.Name) and child ~= local_player.Character and #workspace.Alive:GetChildren() > 1 then
             return
         end
 
@@ -280,7 +241,7 @@ task.defer(function()
     end)
 end)
 
---// night-mode
+--// night mode
 
 task.defer(function()
     while task.wait(1) do
@@ -292,7 +253,7 @@ task.defer(function()
     end
 end)
 
---// shaders.gsl 🌠🤫
+--// shaders
 
 task.defer(function()
     while task.wait(1) do
@@ -312,6 +273,46 @@ end)
 
 --// aura
 
+local aura = {
+    can_parry = true,
+    is_spamming = false,
+
+    parry_Range = 0,
+    spam_Range = 0,  
+    hit_Count = 0,
+
+    hit_Time = tick(),
+    ball_Warping = tick(),
+    is_ball_Warping = false,
+    last_target = nil
+}
+
+ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
+    if getgenv().hit_sound_Enabled then
+        hit_Sound:Play()
+    end
+
+    if getgenv().hit_effect_Enabled then
+        local hit_effect = game:GetObjects("rbxassetid://17407244385")[1]
+
+        hit_effect.Parent = Nurysium_Util.getBall()
+        hit_effect:Emit(3)
+        
+        task.delay(5, function()
+            hit_effect:Destroy()
+        end)
+
+    end
+end)
+
+ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
+    aura.hit_Count += 1
+
+    task.delay(0.15, function()
+        aura.hit_Count -= 1
+    end)
+end)
+
 task.spawn(function()
     RunService.PreRender:Connect(function()
         if not getgenv().aura_Enabled then
@@ -320,8 +321,8 @@ task.spawn(function()
 
         if closest_Entity then
             if workspace.Alive:FindFirstChild(closest_Entity.Name) then
-                if aura_table.is_Spamming then
-                    if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura_table.spam_Range then   
+                if aura.is_spamming then
+                    if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura.spam_Range then   
 
                         parry_remote:FireServer(
                             0.5,
@@ -343,10 +344,11 @@ task.spawn(function()
         end
         
         workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
-            aura_table.hit_Count = 0
-            aura_table.is_ball_Warping = false
-            aura_table.is_Spamming = false
-            aura_table.canParry = true
+            aura.hit_Count = 0
+            aura.is_ball_Warping = false
+            aura.is_spamming = false
+            aura.can_parry = true
+            aura.last_target = nil
         end)
 
         local ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
@@ -357,10 +359,14 @@ task.spawn(function()
         end
 
         self:GetAttributeChangedSignal('target'):Once(function()
-            aura_table.canParry = true
+            aura.can_parry = true
         end)
 
-        if self:GetAttribute('target') ~= local_player.Name or not aura_table.canParry then
+        self:GetAttributeChangedSignal('from'):Once(function()
+            aura.last_target = workspace.Alive:FindFirstChild(self:GetAttribute('from'))
+        end)
+
+        if self:GetAttribute('target') ~= local_player.Name or not aura.can_parry then
             return
         end
 
@@ -392,36 +398,46 @@ task.spawn(function()
         local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
         if target_isMoving or player_isMoving then
-
-            aura_table.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7
+            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.5
 
             if player_isMoving then
-                aura_table.parry_Range = math.max(math.max(ping, 5.5) + ball_Speed / 4.5, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 5.5, 9.5)
             else
-                aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 4.5, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.5, 9.5)
             end
 
         else
-            aura_table.spam_Range = math.max(ping / 10, 15) + ball_Speed / 7
+            aura.spam_Range = math.max(ping / 10, 15) + ball_Speed / 6
         end
 
-        aura_table.is_Spamming = aura_table.hit_Count > 1 or ball_Distance < 13.5
+        aura.is_spamming = aura.hit_Count > 1 or (ball_Distance < 14.5 or (target_Distance <= 10 and ball_Distance <= 10))
 
-        if ball_Dot < -0.2 then
-            aura_table.ball_Warping = tick()
+        if ball_Dot < -0.15 then
+            aura.ball_Warping = tick()
         end
 
         task.spawn(function()
-            if (tick() - aura_table.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 10 then
-                aura_table.is_ball_Warping = false
+            if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 12 then
+                aura.is_ball_Warping = false
 
                 return
             end
 
-            aura_table.is_ball_Warping = true
+            if (ball_Position - aura.last_target.HumanoidRootPart.Position).Magnitude > 18.5 or target_Distance <= 10 then
+                aura.is_ball_Warping = false
+
+                return
+            end
+
+
+            aura.is_ball_Warping = true
         end)
+
+        print(ball_Distance)
+        warn(aura.parry_Range)
+        warn(aura.is_ball_Warping)
         
-        if (ball_Distance <= aura_table.parry_Range or ball_Distance <= 15.5) and not aura_table.is_Spamming and not aura_table.is_ball_Warping then
+        if ball_Distance <= aura.parry_Range and not aura.is_spamming and not aura.is_ball_Warping then
             parry_remote:FireServer(
                 0.5,
                 CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(-1000, 1000))),
@@ -430,20 +446,20 @@ task.spawn(function()
                 false
             )
 
-            aura_table.canParry = false
-            aura_table.hit_Time = tick()
-            aura_table.hit_Count += 1
+            aura.can_parry = false
+            aura.hit_Time = tick()
+            aura.hit_Count += 1
 
             task.delay(0.15, function()
-                aura_table.hit_Count -= 1
+                aura.hit_Count -= 1
             end)
         end
 
         task.spawn(function()
             repeat
                 RunService.PreRender:Wait()
-            until (tick() - aura_table.hit_Time) >= 1
-                aura_table.canParry = true
+            until (tick() - aura.hit_Time) >= 1
+                aura.can_parry = true
         end)
     end)
 end)
