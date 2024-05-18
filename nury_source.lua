@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.4'
+local version = '0.2.5'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -30,6 +30,7 @@ getgenv().night_mode_Enabled = false
 getgenv().trail_Enabled = false
 getgenv().self_effect_Enabled = false
 getgenv().kill_effect_Enabled = false
+getgenv().shaders_effect_Enabled = false
 
 local Services = {
     game:GetService('AdService'),
@@ -52,7 +53,7 @@ function initializate(dataFolder_name: string)
 
     hit_Sound = Instance.new('Sound', nurysium_Data)
     hit_Sound.SoundId = 'rbxassetid://8632670510'
-    hit_Sound.Volume = 5
+    hit_Sound.Volume = 6
 end
 
 local function get_closest_entity(Object: Part)
@@ -169,6 +170,10 @@ library:create_toggle("Kill Effect", "World", function(toggled)
     getgenv().kill_effect_Enabled = toggled
 end)
 
+library:create_toggle("Shaders", "World", function(toggled)
+    getgenv().shaders_effect_Enabled = toggled
+end)
+
 --// kill effect
 
 function play_kill_effect(Part)
@@ -280,9 +285,27 @@ end)
 task.defer(function()
     while task.wait(1) do
         if getgenv().night_mode_Enabled then
-            game:GetService("TweenService"):Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 3.9}):Play()
+            game:GetService("TweenService"):Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 1.9}):Play()
         else
             game:GetService("TweenService"):Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 13.5}):Play()
+        end
+    end
+end)
+
+--// shaders.gsl 🌠🤫
+
+task.defer(function()
+    while task.wait(1) do
+        if getgenv().shaders_effect_Enabled then
+            game:GetService("TweenService"):Create(game:GetService("Lighting").Bloom, TweenInfo.new(4), {
+                Size = 100,
+                Intensity = 2.1
+            }):Play()
+        else
+            game:GetService("TweenService"):Create(game:GetService("Lighting").Bloom, TweenInfo.new(3), {
+                Size = 3,
+                Intensity = 1
+            }):Play()
         end
     end
 end)
@@ -314,17 +337,17 @@ task.spawn(function()
         end
     end)
 
-    workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
-        aura_table.hit_Count = 0
-        aura_table.is_ball_Warping = false
-        aura_table.is_Spamming = false
-        aura_table.canParry = true
-    end)
-
     RunService.PreRender:Connect(function()
         if not getgenv().aura_Enabled then
             return
         end
+        
+        workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
+            aura_table.hit_Count = 0
+            aura_table.is_ball_Warping = false
+            aura_table.is_Spamming = false
+            aura_table.canParry = true
+        end)
 
         local ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
         local self = Nurysium_Util.getBall()
@@ -360,8 +383,6 @@ task.spawn(function()
         local ball_Speed = ball_Velocity.Magnitude
         local ball_speed_Limited = math.min(ball_Speed / 1000, 0.1)
 
-        local ball_predicted_Distance = (ball_Distance - ping / 15.5) - (ball_Speed / 3.5)
-
         local target_Position = closest_Entity.HumanoidRootPart.Position
         local target_Distance = local_player:DistanceFromCharacter(target_Position)
         local target_distance_Limited = math.min(target_Distance / 10000, 0.1)
@@ -372,13 +393,14 @@ task.spawn(function()
 
         if target_isMoving or player_isMoving then
 
+            aura_table.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7
+
             if player_isMoving then
                 aura_table.parry_Range = math.max(math.max(ping, 5.5) + ball_Speed / 4.5, 9.5)
             else
                 aura_table.parry_Range = math.max(math.max(ping, 4) + ball_Speed / 4.5, 9.5)
             end
 
-            aura_table.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7
         else
             aura_table.spam_Range = math.max(ping / 10, 15) + ball_Speed / 7
         end
@@ -399,10 +421,10 @@ task.spawn(function()
             aura_table.is_ball_Warping = true
         end)
         
-        if ball_Distance <= aura_table.parry_Range and not aura_table.is_Spamming and not aura_table.is_ball_Warping then
+        if (ball_Distance <= aura_table.parry_Range or ball_Distance <= 15.5) and not aura_table.is_Spamming and not aura_table.is_ball_Warping then
             parry_remote:FireServer(
                 0.5,
-                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(-1000, 100))),
+                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(-1000, 1000))),
                 {[closest_Entity.Name] = target_Position},
                 {target_Position.X, target_Position.Y},
                 false
