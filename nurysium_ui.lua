@@ -173,7 +173,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
     Title.Size = UDim2.new(0, 70, 0, 20)
     Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
 
-    Title.TextSize = 5.000
+    Title.TextSize = 8.000
     Title.Text = name
     Title.TextScaled = true
 
