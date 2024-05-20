@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.6'
+local version = '0.2.7'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -399,21 +399,21 @@ task.spawn(function()
         local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
         if target_isMoving or player_isMoving then
-            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.5
+            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 5.5
 
             if player_isMoving then
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 5.5, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 3, 9.5)
             else
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.5, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 3, 9.5)
             end
 
         else
             aura.spam_Range = math.max(ping / 10, 15) + ball_Speed / 6
         end
 
-        aura.is_spamming = aura.hit_Count > 1 or (ball_Distance < 14.5 or (target_Distance <= 10 and ball_Distance <= 10))
+        aura.is_spamming = aura.hit_Count > 1 or (target_Distance <= 12 and ball_Distance <= 12)
 
-        if ball_Dot < -0.15 then
+        if ball_Dot < -0.2 then
             aura.ball_Warping = tick()
         end
 
@@ -430,7 +430,6 @@ task.spawn(function()
                 return
             end
 
-
             aura.is_ball_Warping = true
         end)
 
@@ -441,7 +440,7 @@ task.spawn(function()
         if ball_Distance <= aura.parry_Range and not aura.is_spamming and not aura.is_ball_Warping then
             parry_remote:FireServer(
                 0.5,
-                CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(-1000, 1000))),
+                CFrame.new(camera.CFrame.Position, Vector3.zero),
                 {[closest_Entity.Name] = target_Position},
                 {target_Position.X, target_Position.Y},
                 false
