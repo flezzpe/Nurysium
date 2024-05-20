@@ -399,19 +399,19 @@ task.spawn(function()
         local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
         if target_isMoving or player_isMoving then
-            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 5.5
+            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 4.5
 
             if player_isMoving then
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 3, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
             else
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 3, 9.5)
+                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.5, 9.5)
             end
 
         else
-            aura.spam_Range = math.max(ping / 10, 15) + ball_Speed / 6
+            aura.spam_Range = math.max(ping / 10, 15) + ball_Speed / 5
         end
 
-        aura.is_spamming = aura.hit_Count > 1 or (target_Distance <= 12 and ball_Distance <= 12)
+        aura.is_spamming = aura.hit_Count > 1 or (target_Distance <= 15 and ball_Distance <= 17)
 
         if ball_Dot < -0.2 then
             aura.ball_Warping = tick()
