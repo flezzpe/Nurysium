@@ -20,7 +20,6 @@ local camera = workspace.CurrentCamera
 
 local nurysium_Data = nil
 local hit_Sound = nil
-local ai_part = Instance.new('Part', workspace)
 
 local closest_Entity = nil
 local parry_remote = nil
@@ -55,14 +54,6 @@ function initializate(dataFolder_name: string)
 	local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
 	nurysium_Data.Name = dataFolder_name
 
-	ai_part.Name = 'nurysium_ai'
-	ai_part.Anchored = true
-	ai_part.CanCollide = false
-	ai_part.CastShadow = false
-	ai_part.Material = Enum.Material.Neon
-	ai_part.Shape = Enum.PartType.Ball
-	ai_part.Size = Vector3.new(0.5, 0.5, 0.5)
-
 	hit_Sound = Instance.new('Sound', nurysium_Data)
 	hit_Sound.SoundId = 'rbxassetid://6607204501'
 	hit_Sound.Volume = 6
@@ -87,11 +78,6 @@ local function get_closest_entity(Object: Part)
 
 		return closest_Entity
 	end)
-end
-
-local function move_ai_part(start_position, end_postion)
-	TweenService:Create(ai_part, TweenInfo.new(0.85), {Position = end_postion}):Play()
-	TweenService:Create(ai_part, TweenInfo.new(0.65), {Color = Color3.fromRGB(math.random(100, 255), 25, 65)}):Play()
 end
 
 local function get_center()
@@ -334,65 +320,76 @@ local aura = {
 --// AI
 
 task.defer(function()
-	game:GetService("RunService").Heartbeat:Connect(function()
-		if getgenv().ai_Enabled and workspace.Alive:FindFirstChild(local_player.Character.Name) then
-			local self = Nurysium_Util.getBall()
+    game:GetService("RunService").Heartbeat:Connect(function()
+        if getgenv().ai_Enabled and workspace.Alive:FindFirstChild(local_player.Character.Name) then
+            local self = Nurysium_Util.getBall()
 
-			if not self or not closest_Entity then
-				return
-			end
-
-			if not closest_Entity:FindFirstChild('HumanoidRootPart') then
-				walk_to(local_player.Character.HumanoidRootPart.Position + Vector3.new(0, 0, math.cos(tick()) * math.random(35, 50)))
-			end
-
-			local ball_Position = self.Position
-			local ball_Speed = self.AssemblyLinearVelocity.Magnitude
-			local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
-
-			local player_Position = local_player.Character.PrimaryPart.Position
-
-			local target_Position = closest_Entity.HumanoidRootPart.Position
-			local target_Distance = local_player:DistanceFromCharacter(target_Position)
-			local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
-
-			local resolved_Position = Vector3.zero
-
-			local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
-			if target_Humanoid and target_Humanoid:GetState() == Enum.HumanoidStateType.Jumping and local_player.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
-				local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-			end
-
-            if target_Distance <= 35 then
-                resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+            if not self or not closest_Entity then
+                return
             end
 
-			if ball_Distance <= 30 then
-                resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+            if not closest_Entity:FindFirstChild('HumanoidRootPart') then
+                walk_to(local_player.Character.HumanoidRootPart.Position + Vector3.new(math.sin(tick()) * math.random(35, 50), 0, math.cos(tick()) * math.random(35, 50)))
+                return
+            end
 
-                if aura.is_spamming  then
-				    resolved_Position = ball_Distance + Vector3.new(0, 0, math.sin(tick()) * 28.5)
-			    else
-				    resolved_Position = ball_Distance + Vector3.new(math.sin(tick()) * 35, 0, 0)
-			    end
+            local ball_Position = self.Position
+            local ball_Speed = self.AssemblyLinearVelocity.Magnitude
+            local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
+
+            local player_Position = local_player.Character.PrimaryPart.Position
+
+            local target_Position = closest_Entity.HumanoidRootPart.Position
+            local target_Distance = local_player:DistanceFromCharacter(target_Position)
+            local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
+
+            local resolved_Position = Vector3.zero
+
+            local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
+            if target_Humanoid and target_Humanoid:GetState() == Enum.HumanoidStateType.Jumping and local_player.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+                local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+
+           
+            if (ball_Position - player_Position):Dot(local_player.Character.PrimaryPart.CFrame.LookVector) < 0.25 then
+                resolved_Position = target_Position + (player_Position - ball_Position).Unit * 15
+                walk_to(resolved_Position)
+
+                return
+            end
+
+            if tick() % 4 <= 2 then
+                if target_Distance > 10 then
+                    resolved_Position = target_Position + (player_Position - target_Position).Unit * 8
+                else
+                    resolved_Position = target_Position + (player_Position - target_Position).Unit * 15
+                end
             else
-                if aura.is_spamming  then
-				    resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
-			    else
-				    resolved_Position = target_Position + Vector3.new(math.sin(tick()) * 35, 0, 0)
-			    end
+                resolved_Position = target_Position - target_LookVector * (math.random(8.5, 13.5) + (ball_Distance / math.random(8, 20)))
             end
 
-			walk_to(resolved_Position)
-		end
-	end)
+            if (player_Position - target_Position).Magnitude < 8 then
+                resolved_Position = target_Position + (player_Position - target_Position).Unit * 25
+            end
+
+            if ball_Distance < 8 then
+                resolved_Position = player_Position + (player_Position - ball_Position).Unit * 10
+            end
+
+            if aura.is_spamming then
+                resolved_Position = player_Position + (ball_Position - player_Position).Unit * 10
+            end
+
+            walk_to(resolved_Position + Vector3.new(math.sin(tick()) * 6, 0, math.cos(tick()) * 6))
+        end
+    end)
 end)
 
 
 ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
 	aura.hit_Count += 1
 
-	task.delay(0.17, function()
+	task.delay(0.185, function()
 		aura.hit_Count -= 1
 	end)
 end)
@@ -484,9 +481,9 @@ task.spawn(function()
 		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
 		if target_isMoving then
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 15.5 and ball_Distance < 10)) and ball_Dot > 0
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 23 and ball_Distance < 10)) and ball_Dot > 0
         else
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 21.5 and ball_Distance < 10))
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25.5 and ball_Distance < 10))
         end
 
 		if ball_Dot < -0.2 then
@@ -510,7 +507,7 @@ task.spawn(function()
 		if ball_Distance <= aura.parry_Range and not aura.is_ball_Warping and ball_Dot > -0.1 then
 			parry_remote:FireServer(
 				0.5,
-				CFrame.new(camera.CFrame.Position, Vector3.zero),
+				CFrame.new(camera.CFrame.Position, Vector3.new(math.random(-1000, 1000), math.random(0, 1000), math.random(100, 1000))),
 				{[closest_Entity.Name] = target_Position},
 				{target_Position.X, target_Position.Y},
 				false
@@ -520,7 +517,7 @@ task.spawn(function()
 			aura.hit_Time = tick()
 			aura.hit_Count += 1
 
-			task.delay(0.17, function()
+			task.delay(0.185, function()
 				aura.hit_Count -= 1
 			end)
 		end
@@ -529,7 +526,7 @@ task.spawn(function()
 			repeat
 				RunService.PreRender:Wait()
 			until (tick() - aura.hit_Time) >= 1
-			aura.can_parry = true
+			    aura.can_parry = true
 		end)
 	end)
 end)
