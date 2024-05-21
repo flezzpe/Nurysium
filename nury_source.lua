@@ -47,8 +47,8 @@ library:init("nurysium", game:GetService("UserInputService").TouchEnabled, game:
 
 library:create_section("Combat", 17440545793)
 library:create_section("World", 17440865331)
-library:create_section("Misc", 17440868530)
-library:create_section("Settings", 17440866925)
+--// library:create_section("Misc", 17440868530)
+--// library:create_section("Settings", 17440866925)
 
 function initializate(dataFolder_name: string)
 	local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
