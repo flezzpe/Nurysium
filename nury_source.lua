@@ -465,7 +465,6 @@ task.spawn(function()
         end)
 
         if ball_Distance <= aura.parry_Range and not aura.is_ball_Warping and ball_Dot > -0.1 then
-            warn(ball_Dot)
              parry_remote:FireServer(
                 0.5,
                 CFrame.new(camera.CFrame.Position, Vector3.zero),
