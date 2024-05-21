@@ -350,11 +350,7 @@ task.defer(function()
                 local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
             end
 
-           
-            if (ball_Position - player_Position):Dot(local_player.Character.PrimaryPart.CFrame.LookVector) < 0.25 then
-                resolved_Position = target_Position + (player_Position - ball_Position).Unit * 15
-                walk_to(resolved_Position)
-
+            if (ball_Position - player_Position):Dot(local_player.Character.PrimaryPart.CFrame.LookVector) < -0.2 then
                 return
             end
 
@@ -481,9 +477,9 @@ task.spawn(function()
 		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
 		if target_isMoving then
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 23 and ball_Distance < 10)) and ball_Dot > 0
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25 and ball_Distance < 10)) and ball_Dot > 0
         else
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25.5 and ball_Distance < 10))
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 27.5 and ball_Distance < 10))
         end
 
 		if ball_Dot < -0.2 then
