@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.7'
+local version = '0.2.8'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -31,6 +31,7 @@ getgenv().trail_Enabled = false
 getgenv().self_effect_Enabled = false
 getgenv().kill_effect_Enabled = false
 getgenv().shaders_effect_Enabled = false
+getgenv().ai_Enabled = false
 
 local Services = {
     game:GetService('AdService'),
@@ -78,10 +79,10 @@ local function get_closest_entity(Object: Part)
     end)
 end
 
-local function get_distance_to_center()
+local function get_center()
     for _, object in workspace.Map:GetDescendants() do
         if object.Name == 'BALLSPAWN' then
-            return local_player:DistanceFromCharacter(object.Position)
+            return object
         end
     end
 end
@@ -103,9 +104,18 @@ function resolve_parry_Remote()
     end
 end
 
+function walk_to(position)
+    local_player.Character.Humanoid:MoveTo(position)
+end
+
 library:create_toggle("Attack Aura", "Combat", function(toggled)
     resolve_parry_Remote()
     getgenv().aura_Enabled = toggled
+end)
+
+library:create_toggle("AI", "Combat", function(toggled)
+    resolve_parry_Remote()
+    getgenv().ai_Enabled = toggled
 end)
 
 library:create_toggle("Hit Sound", "Combat", function(toggled)
@@ -272,22 +282,6 @@ task.defer(function()
     end
 end)
 
---// aura
-
-local aura = {
-    can_parry = true,
-    is_spamming = false,
-
-    parry_Range = 0,
-    spam_Range = 0,  
-    hit_Count = 0,
-
-    hit_Time = tick(),
-    ball_Warping = tick(),
-    is_ball_Warping = false,
-    last_target = nil
-}
-
 ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
     if getgenv().hit_sound_Enabled then
         hit_Sound:Play()
@@ -306,13 +300,64 @@ ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
     end
 end)
 
+--// aura
+
+local aura = {
+    can_parry = true,
+    is_spamming = false,
+
+    parry_Range = 0,
+    spam_Range = 0,  
+    hit_Count = 0,
+
+    hit_Time = tick(),
+    ball_Warping = tick(),
+    is_ball_Warping = false,
+    last_target = nil
+}
+
+--// AI
+
+task.defer(function()
+    game:GetService("RunService").Heartbeat:Connect(function()
+        if getgenv().ai_Enabled and workspace.Alive:FindFirstChild(local_player.Character.Name) then
+            local self = Nurysium_Util.getBall()
+
+            if not self or not closest_Entity then
+                return
+            end
+
+            local ball_Position = self.Position
+            local ball_Speed = self.AssemblyLinearVelocity.Magnitude
+            local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
+
+            local target_Position = closest_Entity.HumanoidRootPart.Position
+            local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
+            local backwards_Position = target_Position - target_LookVector * 13.5
+
+            local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
+            if target_Humanoid and target_Humanoid:GetState() == Enum.HumanoidStateType.Jumping and local_player.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+                local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+
+            if aura.is_spamming and not aura.can_parry then
+                walk_to(backwards_Position + Vector3.new(math.sin(tick()) * 38 + aura.hit_Count, 0, 0))
+            else
+                walk_to(backwards_Position + Vector3.new(0, 0, math.cos(tick()) * 50))
+            end
+        end
+    end)
+end)
+
+
 ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
     aura.hit_Count += 1
 
-    task.delay(0.15, function()
+    task.delay(0.17, function()
         aura.hit_Count -= 1
     end)
 end)
+
 
 task.spawn(function()
     RunService.PreRender:Connect(function()
@@ -324,7 +369,6 @@ task.spawn(function()
             if workspace.Alive:FindFirstChild(closest_Entity.Name) then
                 if aura.is_spamming then
                     if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura.spam_Range then   
-
                         parry_remote:FireServer(
                             0.5,
                             CFrame.new(camera.CFrame.Position, Vector3.zero),
@@ -332,7 +376,6 @@ task.spawn(function()
                             {closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y},
                             false
                         )
-
                     end
                 end
             end
@@ -398,20 +441,10 @@ task.spawn(function()
         local target_isMoving = target_Velocity.Magnitude > 0
         local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
-        if target_isMoving or player_isMoving then
-            aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 4.5
+        aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7.5
+        aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.75, 9.5)
 
-            if player_isMoving then
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
-            else
-                aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.5, 9.5)
-            end
-
-        else
-            aura.spam_Range = math.max(ping / 10, 15) + ball_Speed / 5
-        end
-
-        aura.is_spamming = aura.hit_Count > 1 or (target_Distance <= 15 and ball_Distance <= 17)
+        aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 15 and ball_Distance <= 15)) and ball_Dot > -0.3
 
         if ball_Dot < -0.2 then
             aura.ball_Warping = tick()
@@ -420,25 +453,20 @@ task.spawn(function()
         task.spawn(function()
             if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 12 then
                 aura.is_ball_Warping = false
-
                 return
             end
 
-            if (ball_Position - aura.last_target.HumanoidRootPart.Position).Magnitude > 18.5 or target_Distance <= 10 then
+            if (ball_Position - aura.last_target.HumanoidRootPart.Position).Magnitude > 35.5 or target_Distance <= 12 then
                 aura.is_ball_Warping = false
-
                 return
             end
 
             aura.is_ball_Warping = true
         end)
 
-        print(ball_Distance)
-        warn(aura.parry_Range)
-        warn(aura.is_ball_Warping)
-        
-        if ball_Distance <= aura.parry_Range and not aura.is_spamming and not aura.is_ball_Warping then
-            parry_remote:FireServer(
+        if ball_Distance <= aura.parry_Range and not aura.is_ball_Warping and ball_Dot > -0.1 then
+            warn(ball_Dot)
+             parry_remote:FireServer(
                 0.5,
                 CFrame.new(camera.CFrame.Position, Vector3.zero),
                 {[closest_Entity.Name] = target_Position},
@@ -450,7 +478,7 @@ task.spawn(function()
             aura.hit_Time = tick()
             aura.hit_Count += 1
 
-            task.delay(0.15, function()
+            task.delay(0.17, function()
                 aura.hit_Count -= 1
             end)
         end
@@ -463,6 +491,7 @@ task.spawn(function()
         end)
     end)
 end)
+
 
 
 initializate('nurysium_temp')
