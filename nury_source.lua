@@ -11,6 +11,7 @@ local Stats = game:GetService('Stats')
 local Players = game:GetService('Players')
 local RunService = game:GetService('RunService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local TweenService = game:GetService('TweenService')
 
 local Nurysium_Util = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/Nurysium/main/nurysium_helper.lua'))()
 
@@ -19,6 +20,7 @@ local camera = workspace.CurrentCamera
 
 local nurysium_Data = nil
 local hit_Sound = nil
+local ai_part = Instance.new('Part', workspace)
 
 local closest_Entity = nil
 local parry_remote = nil
@@ -34,14 +36,14 @@ getgenv().shaders_effect_Enabled = false
 getgenv().ai_Enabled = false
 
 local Services = {
-    game:GetService('AdService'),
-    game:GetService('SocialService')
+	game:GetService('AdService'),
+	game:GetService('SocialService')
 }
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/flezzpe/Nurysium/main/nurysium_ui.lua"))()
 task.wait(0.5)
 
---// Yes, you can rename, I don't mind 🌠🤫
+--// Yes, you can rename, I don't mind 🌠
 library:init("nurysium", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
 
 library:create_section("Combat", 17440545793)
@@ -50,445 +52,474 @@ library:create_section("Misc", 17440868530)
 library:create_section("Settings", 17440866925)
 
 function initializate(dataFolder_name: string)
-    local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
-    nurysium_Data.Name = dataFolder_name
+	local nurysium_Data = Instance.new('Folder', game:GetService('CoreGui'))
+	nurysium_Data.Name = dataFolder_name
 
-    hit_Sound = Instance.new('Sound', nurysium_Data)
-    hit_Sound.SoundId = 'rbxassetid://8632670510'
-    hit_Sound.Volume = 6
+	ai_part.Name = 'nurysium_ai'
+	ai_part.Anchored = true
+	ai_part.CanCollide = false
+	ai_part.CastShadow = false
+	ai_part.Material = Enum.Material.Neon
+	ai_part.Shape = Enum.PartType.Ball
+	ai_part.Size = Vector3.new(0.5, 0.5, 0.5)
+
+	hit_Sound = Instance.new('Sound', nurysium_Data)
+	hit_Sound.SoundId = 'rbxassetid://6607204501'
+	hit_Sound.Volume = 6
 end
 
 local function get_closest_entity(Object: Part)
-    task.spawn(function()
-        local closest
-        local max_distance = math.huge
+	task.spawn(function()
+		local closest
+		local max_distance = math.huge
 
-        for index, entity in workspace.Alive:GetChildren() do
-            if entity.Name ~= Players.LocalPlayer.Name then
-                local distance = (Object.Position - entity.HumanoidRootPart.Position).Magnitude
+		for index, entity in workspace.Alive:GetChildren() do
+			if entity.Name ~= Players.LocalPlayer.Name then
+				local distance = (Object.Position - entity.HumanoidRootPart.Position).Magnitude
 
-                if distance < max_distance then
-                    closest_Entity = entity
-                    max_distance = distance
-                end
+				if distance < max_distance then
+					closest_Entity = entity
+					max_distance = distance
+				end
 
-            end
-        end
+			end
+		end
 
-        return closest_Entity
-    end)
+		return closest_Entity
+	end)
+end
+
+local function move_ai_part(start_position, end_postion)
+	ai_part.Position = start_position
+	
+	TweenService:Create(ai_part, TweenInfo.new(0.85), {Position = end_postion}):Play()
+	TweenService:Create(ai_part, TweenInfo.new(0.65), {Color = Color3.fromRGB(math.random(100, 255), math.random(100, 255), math.random(100, 255))}):Play()
 end
 
 local function get_center()
-    for _, object in workspace.Map:GetDescendants() do
-        if object.Name == 'BALLSPAWN' then
-            return object
-        end
-    end
+	for _, object in workspace.Map:GetDescendants() do
+		if object.Name == 'BALLSPAWN' then
+			return object
+		end
+	end
 end
 
 --// Thanks Aries for this.
 function resolve_parry_Remote()
-    for _, value in Services do
-        local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
+	for _, value in Services do
+		local temp_remote = value:FindFirstChildOfClass('RemoteEvent')
 
-        if not temp_remote then
-            continue
-        end
+		if not temp_remote then
+			continue
+		end
 
-        if not temp_remote.Name:find('\n') then
-            continue
-        end
+		if not temp_remote.Name:find('\n') then
+			continue
+		end
 
-        parry_remote = temp_remote
-    end
+		parry_remote = temp_remote
+	end
 end
 
 function walk_to(position)
-    local_player.Character.Humanoid:MoveTo(position)
+	local_player.Character.Humanoid:MoveTo(position)
 end
 
 library:create_toggle("Attack Aura", "Combat", function(toggled)
-    resolve_parry_Remote()
-    getgenv().aura_Enabled = toggled
+	resolve_parry_Remote()
+	getgenv().aura_Enabled = toggled
 end)
 
 library:create_toggle("AI", "Combat", function(toggled)
-    resolve_parry_Remote()
-    getgenv().ai_Enabled = toggled
+	resolve_parry_Remote()
+	getgenv().ai_Enabled = toggled
 end)
 
 library:create_toggle("Hit Sound", "Combat", function(toggled)
-    getgenv().hit_sound_Enabled = toggled
+	getgenv().hit_sound_Enabled = toggled
 end)
 
 library:create_toggle("Hit Effect", "World", function(toggled)
-    getgenv().hit_effect_Enabled = toggled
+	getgenv().hit_effect_Enabled = toggled
 end)
 
 library:create_toggle("Night Mode", "World", function(toggled)
-    getgenv().night_mode_Enabled = toggled
+	getgenv().night_mode_Enabled = toggled
 end)
 
 library:create_toggle("Trail", "World", function(toggled)
-    getgenv().trail_Enabled = toggled
+	getgenv().trail_Enabled = toggled
 end)
 
 library:create_toggle("Self Effect", "World", function(toggled)
-    getgenv().self_effect_Enabled = toggled
+	getgenv().self_effect_Enabled = toggled
 end)
 
 library:create_toggle("Kill Effect", "World", function(toggled)
-    getgenv().kill_effect_Enabled = toggled
+	getgenv().kill_effect_Enabled = toggled
 end)
 
 library:create_toggle("Shaders", "World", function(toggled)
-    getgenv().shaders_effect_Enabled = toggled
+	getgenv().shaders_effect_Enabled = toggled
 end)
 
 --// kill effect
 
 function play_kill_effect(Part)
-    task.defer(function()
-        local bell = game:GetObjects("rbxassetid://17519762269")[1]
+	task.defer(function()
+		local bell = game:GetObjects("rbxassetid://17519762269")[1]
 
-        bell.Name = 'Yeat_BELL'
-        bell.Parent = workspace
+		bell.Name = 'Yeat_BELL'
+		bell.Parent = workspace
 
-        bell.Position = Part.Position - Vector3.new(0, 20, 0)
-        bell:WaitForChild('Sound'):Play()
+		bell.Position = Part.Position - Vector3.new(0, 20, 0)
+		bell:WaitForChild('Sound'):Play()
 
-        game:GetService("TweenService"):Create(bell, TweenInfo.new(0.85, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-            Position = Part.Position + Vector3.new(0, 10, 0)
-        }):Play()
+		TweenService:Create(bell, TweenInfo.new(0.85, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+			Position = Part.Position + Vector3.new(0, 10, 0)
+		}):Play()
 
-        task.delay(5, function()
-            game:GetService("TweenService"):Create(bell, TweenInfo.new(1.75, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-                Position = Part.Position + Vector3.new(0, 100, 0)
-            }):Play()
-        end)
+		task.delay(5, function()
+			TweenService:Create(bell, TweenInfo.new(1.75, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+				Position = Part.Position + Vector3.new(0, 100, 0)
+			}):Play()
+		end)
 
-        task.delay(6, function()
-            bell:Destroy()
-        end)
-    end)
+		task.delay(6, function()
+			bell:Destroy()
+		end)
+	end)
 end
 
 task.defer(function()
-    workspace.Alive.ChildRemoved:Connect(function(child)
-        if not workspace.Dead:FindFirstChild(child.Name) and child ~= local_player.Character and #workspace.Alive:GetChildren() > 1 then
-            return
-        end
+	workspace.Alive.ChildRemoved:Connect(function(child)
+		if not workspace.Dead:FindFirstChild(child.Name) and child ~= local_player.Character and #workspace.Alive:GetChildren() > 1 then
+			return
+		end
 
-        if getgenv().kill_effect_Enabled then
-            play_kill_effect(child.HumanoidRootPart)
-        end
-    end)
+		if getgenv().kill_effect_Enabled then
+			play_kill_effect(child.HumanoidRootPart)
+		end
+	end)
 end)
 
 --// self effect
 
 task.defer(function()
-    game:GetService("RunService").Heartbeat:Connect(function()
+	game:GetService("RunService").Heartbeat:Connect(function()
 
-        if not local_player.Character then
-            return
-        end
+		if not local_player.Character then
+			return
+		end
 
-        if getgenv().self_effect_Enabled then
-            local effect = game:GetObjects("rbxassetid://17519530107")[1]
+		if getgenv().self_effect_Enabled then
+			local effect = game:GetObjects("rbxassetid://17519530107")[1]
 
-            effect.Name = 'nurysium_efx'
+			effect.Name = 'nurysium_efx'
 
-            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
-                return
-            end
-            
-            effect.Parent = local_player.Character.PrimaryPart
-        else
-            
-            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
-                local_player.Character.PrimaryPart['nurysium_efx']:Destroy()
-            end
-        end
+			if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
+				return
+			end
 
-    end)
+			effect.Parent = local_player.Character.PrimaryPart
+		else
+
+			if local_player.Character.PrimaryPart:FindFirstChild('nurysium_efx') then
+				local_player.Character.PrimaryPart['nurysium_efx']:Destroy()
+			end
+		end
+
+	end)
 end)
 
 --// trail
 
 task.defer(function()
-    game:GetService("RunService").Heartbeat:Connect(function()
+	game:GetService("RunService").Heartbeat:Connect(function()
 
-        if not local_player.Character then
-            return
-        end
+		if not local_player.Character then
+			return
+		end
 
-        if getgenv().trail_Enabled then
-            local trail = game:GetObjects("rbxassetid://17483658369")[1]
+		if getgenv().trail_Enabled then
+			local trail = game:GetObjects("rbxassetid://17483658369")[1]
 
-            trail.Name = 'nurysium_fx'
+			trail.Name = 'nurysium_fx'
 
-            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_fx') then
-                return
-            end
+			if local_player.Character.PrimaryPart:FindFirstChild('nurysium_fx') then
+				return
+			end
 
-            local Attachment0 = Instance.new("Attachment", local_player.Character.PrimaryPart)
-            local Attachment1 = Instance.new("Attachment", local_player.Character.PrimaryPart)
+			local Attachment0 = Instance.new("Attachment", local_player.Character.PrimaryPart)
+			local Attachment1 = Instance.new("Attachment", local_player.Character.PrimaryPart)
 
-            Attachment0.Position = Vector3.new(0, -2.411, 0)
-            Attachment1.Position = Vector3.new(0, 2.504, 0)
+			Attachment0.Position = Vector3.new(0, -2.411, 0)
+			Attachment1.Position = Vector3.new(0, 2.504, 0)
 
-            trail.Parent = local_player.Character.PrimaryPart
-            trail.Attachment0 = Attachment0
-            trail.Attachment1 = Attachment1
-        else
-            
-            if local_player.Character.PrimaryPart:FindFirstChild('nurysium_fx') then
-                local_player.Character.PrimaryPart['nurysium_fx']:Destroy()
-            end
-        end
+			trail.Parent = local_player.Character.PrimaryPart
+			trail.Attachment0 = Attachment0
+			trail.Attachment1 = Attachment1
+		else
 
-    end)
+			if local_player.Character.PrimaryPart:FindFirstChild('nurysium_fx') then
+				local_player.Character.PrimaryPart['nurysium_fx']:Destroy()
+			end
+		end
+
+	end)
 end)
 
 --// night mode
 
 task.defer(function()
-    while task.wait(1) do
-        if getgenv().night_mode_Enabled then
-            game:GetService("TweenService"):Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 1.9}):Play()
-        else
-            game:GetService("TweenService"):Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 13.5}):Play()
-        end
-    end
+	while task.wait(1) do
+		if getgenv().night_mode_Enabled then
+			TweenService:Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 1.9}):Play()
+		else
+			TweenService:Create(game:GetService("Lighting"), TweenInfo.new(3), {ClockTime = 13.5}):Play()
+		end
+	end
 end)
 
 --// shaders
 
 task.defer(function()
-    while task.wait(1) do
-        if getgenv().shaders_effect_Enabled then
-            game:GetService("TweenService"):Create(game:GetService("Lighting").Bloom, TweenInfo.new(4), {
-                Size = 100,
-                Intensity = 2.1
-            }):Play()
-        else
-            game:GetService("TweenService"):Create(game:GetService("Lighting").Bloom, TweenInfo.new(3), {
-                Size = 3,
-                Intensity = 1
-            }):Play()
-        end
-    end
+	while task.wait(1) do
+		if getgenv().shaders_effect_Enabled then
+			TweenService:Create(game:GetService("Lighting").Bloom, TweenInfo.new(4), {
+				Size = 100,
+				Intensity = 2.1
+			}):Play()
+		else
+			TweenService:Create(game:GetService("Lighting").Bloom, TweenInfo.new(3), {
+				Size = 3,
+				Intensity = 1
+			}):Play()
+		end
+	end
 end)
 
 ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
-    if getgenv().hit_sound_Enabled then
-        hit_Sound:Play()
-    end
+	if getgenv().hit_sound_Enabled then
+		hit_Sound:Play()
+	end
 
-    if getgenv().hit_effect_Enabled then
-        local hit_effect = game:GetObjects("rbxassetid://17407244385")[1]
+	if getgenv().hit_effect_Enabled then
+		local hit_effect = game:GetObjects("rbxassetid://17407244385")[1]
 
-        hit_effect.Parent = Nurysium_Util.getBall()
-        hit_effect:Emit(3)
-        
-        task.delay(5, function()
-            hit_effect:Destroy()
-        end)
+		hit_effect.Parent = Nurysium_Util.getBall()
+		hit_effect:Emit(3)
 
-    end
+		task.delay(5, function()
+			hit_effect:Destroy()
+		end)
+
+	end
 end)
 
 --// aura
 
 local aura = {
-    can_parry = true,
-    is_spamming = false,
+	can_parry = true,
+	is_spamming = false,
 
-    parry_Range = 0,
-    spam_Range = 0,  
-    hit_Count = 0,
+	parry_Range = 0,
+	spam_Range = 0,  
+	hit_Count = 0,
 
-    hit_Time = tick(),
-    ball_Warping = tick(),
-    is_ball_Warping = false,
-    last_target = nil
+	hit_Time = tick(),
+	ball_Warping = tick(),
+	is_ball_Warping = false,
+	last_target = nil
 }
 
 --// AI
 
 task.defer(function()
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if getgenv().ai_Enabled and workspace.Alive:FindFirstChild(local_player.Character.Name) then
-            local self = Nurysium_Util.getBall()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if getgenv().ai_Enabled and workspace.Alive:FindFirstChild(local_player.Character.Name) then
+			local self = Nurysium_Util.getBall()
 
-            if not self or not closest_Entity then
-                return
-            end
+			if not self or not closest_Entity then
+				return
+			end
 
-            local ball_Position = self.Position
-            local ball_Speed = self.AssemblyLinearVelocity.Magnitude
-            local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
+			if not closest_Entity:FindFirstChild('HumanoidRootPart') then
+				walk_to(local_player.Character.HumanoidRootPart.Position + Vector3.new(0, 0, math.cos(tick()) * math.random(35, 50)))
+			end
 
-            local target_Position = closest_Entity.HumanoidRootPart.Position
-            local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
-            local backwards_Position = target_Position - target_LookVector * 13.5
+			local ball_Position = self.Position
+			local ball_Speed = self.AssemblyLinearVelocity.Magnitude
+			local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
 
-            local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
-            if target_Humanoid and target_Humanoid:GetState() == Enum.HumanoidStateType.Jumping and local_player.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
-                local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
+			local player_Position = local_player.Character.PrimaryPart.Position
 
-            if aura.is_spamming and not aura.can_parry then
-                walk_to(backwards_Position + Vector3.new(math.sin(tick()) * 38 + aura.hit_Count, 0, 0))
-            else
-                walk_to(backwards_Position + Vector3.new(0, 0, math.cos(tick()) * 50))
-            end
-        end
-    end)
+			local target_Position = closest_Entity.HumanoidRootPart.Position
+			local target_Distance = local_player:DistanceFromCharacter(target_Position)
+			local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
+
+            local behind_target = player_Position - target_LookVector * (ball_Speed / 3.5)
+			local resolved_Position = Vector3.zero
+
+			local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
+			if target_Humanoid and target_Humanoid:GetState() == Enum.HumanoidStateType.Jumping and local_player.Character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+				local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+			end
+
+			if aura.is_spamming  then
+				resolved_Position = behind_target + Vector3.new(math.cos(tick()) * 28.5 + (ball_Speed / 93.5), 0, math.sin(tick()) * 28.5)
+			else
+				resolved_Position = behind_target + Vector3.new(math.cos(tick()) * 35 + (ball_Speed / 65.5), 0, math.sin(tick()) * 35)
+			end
+
+            move_ai_part(resolved_Position)
+			walk_to(resolved_Position)
+		else
+			move_ai_part(Vector3.new(10000, 10000, 10000))
+		end
+	end)
 end)
 
 
 ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent:Connect(function()
-    aura.hit_Count += 1
+	aura.hit_Count += 1
 
-    task.delay(0.17, function()
-        aura.hit_Count -= 1
-    end)
+	task.delay(0.17, function()
+		aura.hit_Count -= 1
+	end)
 end)
 
 
 task.spawn(function()
-    RunService.PreRender:Connect(function()
-        if not getgenv().aura_Enabled then
-            return
-        end
+	RunService.PreRender:Connect(function()
+		if not getgenv().aura_Enabled then
+			return
+		end
 
-        if closest_Entity then
-            if workspace.Alive:FindFirstChild(closest_Entity.Name) then
-                if aura.is_spamming then
-                    if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura.spam_Range then   
-                        parry_remote:FireServer(
-                            0.5,
-                            CFrame.new(camera.CFrame.Position, Vector3.zero),
-                            {[closest_Entity.Name] = closest_Entity.HumanoidRootPart.Position},
-                            {closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y},
-                            false
-                        )
-                    end
-                end
-            end
-        end
-    end)
+		if closest_Entity then
+			if workspace.Alive:FindFirstChild(closest_Entity.Name) then
+				if aura.is_spamming then
+					if local_player:DistanceFromCharacter(closest_Entity.HumanoidRootPart.Position) <= aura.spam_Range then   
+						parry_remote:FireServer(
+							0.5,
+							CFrame.new(camera.CFrame.Position, Vector3.zero),
+							{[closest_Entity.Name] = closest_Entity.HumanoidRootPart.Position},
+							{closest_Entity.HumanoidRootPart.Position.X, closest_Entity.HumanoidRootPart.Position.Y},
+							false
+						)
+					end
+				end
+			end
+		end
+	end)
 
-    RunService.PreRender:Connect(function()
-        if not getgenv().aura_Enabled then
-            return
-        end
-        
-        workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
-            aura.hit_Count = 0
-            aura.is_ball_Warping = false
-            aura.is_spamming = false
-            aura.can_parry = true
-            aura.last_target = nil
-        end)
+	RunService.PreRender:Connect(function()
+		if not getgenv().aura_Enabled then
+			return
+		end
 
-        local ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
-        local self = Nurysium_Util.getBall()
+		workspace:WaitForChild("Balls").ChildRemoved:Once(function(child)
+			aura.hit_Count = 0
+			aura.is_ball_Warping = false
+			aura.is_spamming = false
+			aura.can_parry = true
+			aura.last_target = nil
+		end)
 
-        if not self then
-            return
-        end
+		local ping = Stats.Network.ServerStatsItem['Data Ping']:GetValue() / 10
+		local self = Nurysium_Util.getBall()
 
-        self:GetAttributeChangedSignal('target'):Once(function()
-            aura.can_parry = true
-        end)
+		if not self then
+			return
+		end
 
-        self:GetAttributeChangedSignal('from'):Once(function()
-            aura.last_target = workspace.Alive:FindFirstChild(self:GetAttribute('from'))
-        end)
+		self:GetAttributeChangedSignal('target'):Once(function()
+			aura.can_parry = true
+		end)
 
-        if self:GetAttribute('target') ~= local_player.Name or not aura.can_parry then
-            return
-        end
+		self:GetAttributeChangedSignal('from'):Once(function()
+			aura.last_target = workspace.Alive:FindFirstChild(self:GetAttribute('from'))
+		end)
 
-        get_closest_entity(local_player.Character.PrimaryPart)
+		if self:GetAttribute('target') ~= local_player.Name or not aura.can_parry then
+			return
+		end
 
-        local player_Position = local_player.Character.PrimaryPart.Position
-        local player_Velocity = local_player.Character.HumanoidRootPart.AssemblyLinearVelocity
-        local player_isMoving = player_Velocity.Magnitude > 0
+		get_closest_entity(local_player.Character.PrimaryPart)
 
-        local ball_Position = self.Position
-        local ball_Velocity = self.AssemblyLinearVelocity
+		local player_Position = local_player.Character.PrimaryPart.Position
+		local player_Velocity = local_player.Character.HumanoidRootPart.AssemblyLinearVelocity
+		local player_isMoving = player_Velocity.Magnitude > 0
 
-        if self:FindFirstChild('zoomies') then
-            ball_Velocity = self.zoomies.VectorVelocity
-        end
+		local ball_Position = self.Position
+		local ball_Velocity = self.AssemblyLinearVelocity
 
-        local ball_Direction = (local_player.Character.PrimaryPart.Position - ball_Position).Unit
-        local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
-        local ball_Dot = ball_Direction:Dot(ball_Velocity.Unit)
-        local ball_Speed = ball_Velocity.Magnitude
-        local ball_speed_Limited = math.min(ball_Speed / 1000, 0.1)
+		if self:FindFirstChild('zoomies') then
+			ball_Velocity = self.zoomies.VectorVelocity
+		end
 
-        local target_Position = closest_Entity.HumanoidRootPart.Position
-        local target_Distance = local_player:DistanceFromCharacter(target_Position)
-        local target_distance_Limited = math.min(target_Distance / 10000, 0.1)
-        local target_Direction = (local_player.Character.PrimaryPart.Position - closest_Entity.HumanoidRootPart.Position).Unit
-        local target_Velocity = closest_Entity.HumanoidRootPart.AssemblyLinearVelocity
-        local target_isMoving = target_Velocity.Magnitude > 0
-        local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
+		local ball_Direction = (local_player.Character.PrimaryPart.Position - ball_Position).Unit
+		local ball_Distance = local_player:DistanceFromCharacter(ball_Position)
+		local ball_Dot = ball_Direction:Dot(ball_Velocity.Unit)
+		local ball_Speed = ball_Velocity.Magnitude
+		local ball_speed_Limited = math.min(ball_Speed / 1000, 0.1)
 
-        aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 7.5
-        aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4.75, 9.5)
+		local target_Position = closest_Entity.HumanoidRootPart.Position
+		local target_Distance = local_player:DistanceFromCharacter(target_Position)
+		local target_distance_Limited = math.min(target_Distance / 10000, 0.1)
+		local target_Direction = (local_player.Character.PrimaryPart.Position - closest_Entity.HumanoidRootPart.Position).Unit
+		local target_Velocity = closest_Entity.HumanoidRootPart.AssemblyLinearVelocity
+		local target_isMoving = target_Velocity.Magnitude > 0
+		local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
-        aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 15 and ball_Distance <= 15)) and ball_Dot > -0.3
+		aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.25
+		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
-        if ball_Dot < -0.2 then
-            aura.ball_Warping = tick()
-        end
+		aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 14 and ball_Distance < 15))
 
-        task.spawn(function()
-            if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 12 then
-                aura.is_ball_Warping = false
-                return
-            end
+		if ball_Dot < -0.2 then
+			aura.ball_Warping = tick()
+		end
 
-            if (ball_Position - aura.last_target.HumanoidRootPart.Position).Magnitude > 35.5 or target_Distance <= 12 then
-                aura.is_ball_Warping = false
-                return
-            end
+		task.spawn(function()
+			if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 12 then
+				aura.is_ball_Warping = false
+				return
+			end
 
-            aura.is_ball_Warping = true
-        end)
+			if (ball_Position - aura.last_target.HumanoidRootPart.Position).Magnitude > 35.5 or target_Distance <= 12 then
+				aura.is_ball_Warping = false
+				return
+			end
 
-        if ball_Distance <= aura.parry_Range and not aura.is_ball_Warping and ball_Dot > -0.1 then
-             parry_remote:FireServer(
-                0.5,
-                CFrame.new(camera.CFrame.Position, Vector3.zero),
-                {[closest_Entity.Name] = target_Position},
-                {target_Position.X, target_Position.Y},
-                false
-            )
+			aura.is_ball_Warping = true
+		end)
 
-            aura.can_parry = false
-            aura.hit_Time = tick()
-            aura.hit_Count += 1
+		if ball_Distance <= aura.parry_Range and not aura.is_ball_Warping and ball_Dot > -0.1 then
+			parry_remote:FireServer(
+				0.5,
+				CFrame.new(camera.CFrame.Position, Vector3.zero),
+				{[closest_Entity.Name] = target_Position},
+				{target_Position.X, target_Position.Y},
+				false
+			)
 
-            task.delay(0.17, function()
-                aura.hit_Count -= 1
-            end)
-        end
+			aura.can_parry = false
+			aura.hit_Time = tick()
+			aura.hit_Count += 1
 
-        task.spawn(function()
-            repeat
-                RunService.PreRender:Wait()
-            until (tick() - aura.hit_Time) >= 1
-                aura.can_parry = true
-        end)
-    end)
+			task.delay(0.17, function()
+				aura.hit_Count -= 1
+			end)
+		end
+
+		task.spawn(function()
+			repeat
+				RunService.PreRender:Wait()
+			until (tick() - aura.hit_Time) >= 1
+			aura.can_parry = true
+		end)
+	end)
 end)
 
 
