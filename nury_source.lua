@@ -477,7 +477,7 @@ task.spawn(function()
 		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
 		if target_isMoving then
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25 and ball_Distance < 10)) and ball_Dot > 0
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25 and ball_Distance < 10)) and ball_Dot > -0.25
         else
             aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 27.5 and ball_Distance < 10))
         end
