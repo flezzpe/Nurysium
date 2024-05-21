@@ -13,7 +13,8 @@ local ui_data = {
 local color_shader = Instance.new("ColorCorrectionEffect", workspace.CurrentCamera)
 local blur_shader = Instance.new("BlurEffect", workspace.CurrentCamera)
 
-blur_shader.Size = 0
+blur_shader.Size = 256
+color_shader.Saturation = -1
 
 local function animate_elements(speed: number)
 	ui.Background["functions_frame"].UIListLayout.Padding = UDim.new(0.5, 0)
@@ -24,12 +25,12 @@ local function animate_elements(speed: number)
 end
 
 function nurysium: open()
-	tween_service:Create(color_shader, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+	tween_service:Create(color_shader, TweenInfo.new(1.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		Saturation = -1
 	}):Play()
 
 	tween_service:Create(blur_shader, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-		Size = 100
+		Size = 256
 	}):Play()
 	
 	task.delay(0.65, function()
