@@ -33,6 +33,7 @@ getgenv().self_effect_Enabled = false
 getgenv().kill_effect_Enabled = false
 getgenv().shaders_effect_Enabled = false
 getgenv().ai_Enabled = false
+getgenv().spectate_Enabled = false
 
 local Services = {
 	game:GetService('AdService'),
@@ -145,6 +146,10 @@ end)
 
 library:create_toggle("Shaders", "World", function(toggled)
 	getgenv().shaders_effect_Enabled = toggled
+end)
+
+library:create_toggle("Spectate Ball", "World", function(toggled)
+	getgenv().spectate_Enabled = toggled
 end)
 
 --// kill effect
@@ -265,6 +270,23 @@ task.defer(function()
 	end
 end)
 
+--// spectate ball
+
+task.defer(function()
+    RunService.RenderStepped:Connect(function()
+        if getgenv().spectate_Enabled then
+
+            local self = Nurysium_Util.getBall()
+
+            if not self then
+                return
+            end
+
+            workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(workspace.CurrentCamera.CFrame.Position, self.Position), 1.5)
+        end
+    end)
+end)
+
 --// shaders
 
 task.defer(function()
@@ -350,7 +372,7 @@ task.defer(function()
                 local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
             end
 
-            if (ball_Position - player_Position):Dot(local_player.Character.PrimaryPart.CFrame.LookVector) < -0.2 then
+            if (ball_Position - player_Position):Dot(local_player.Character.PrimaryPart.CFrame.LookVector) < -0.2 and tick() % 4 <= 2 then
                 return
             end
 
@@ -477,9 +499,9 @@ task.spawn(function()
 		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
 		if target_isMoving then
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 25 and ball_Distance < 10)) and ball_Dot > -0.25
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 11 and ball_Distance < 10)) and ball_Dot > -0.25
         else
-            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 27.5 and ball_Distance < 10))
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 11.5 and ball_Distance < 10))
         end
 
 		if ball_Dot < -0.2 then
@@ -513,7 +535,7 @@ task.spawn(function()
 			aura.hit_Time = tick()
 			aura.hit_Count += 1
 
-			task.delay(0.185, function()
+			task.delay(0.2, function()
 				aura.hit_Count -= 1
 			end)
 		end
