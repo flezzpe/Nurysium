@@ -90,10 +90,8 @@ local function get_closest_entity(Object: Part)
 end
 
 local function move_ai_part(start_position, end_postion)
-	ai_part.Position = start_position
-	
 	TweenService:Create(ai_part, TweenInfo.new(0.85), {Position = end_postion}):Play()
-	TweenService:Create(ai_part, TweenInfo.new(0.65), {Color = Color3.fromRGB(math.random(100, 255), math.random(100, 255), math.random(100, 255))}):Play()
+	TweenService:Create(ai_part, TweenInfo.new(0.65), {Color = Color3.fromRGB(math.random(100, 255), 25, 65)}):Play()
 end
 
 local function get_center()
@@ -358,7 +356,6 @@ task.defer(function()
 			local target_Distance = local_player:DistanceFromCharacter(target_Position)
 			local target_LookVector = closest_Entity.HumanoidRootPart.CFrame.LookVector
 
-            local behind_target = player_Position - target_LookVector * (ball_Speed / 3.5)
 			local resolved_Position = Vector3.zero
 
 			local target_Humanoid = closest_Entity:FindFirstChildOfClass("Humanoid")
@@ -366,16 +363,27 @@ task.defer(function()
 				local_player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			end
 
-			if aura.is_spamming  then
-				resolved_Position = behind_target + Vector3.new(math.cos(tick()) * 28.5 + (ball_Speed / 93.5), 0, math.sin(tick()) * 28.5)
-			else
-				resolved_Position = behind_target + Vector3.new(math.cos(tick()) * 35 + (ball_Speed / 65.5), 0, math.sin(tick()) * 35)
-			end
+            if target_Distance <= 35 then
+                resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+            end
 
-            move_ai_part(resolved_Position)
+			if ball_Distance <= 30 then
+                resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+
+                if aura.is_spamming  then
+				    resolved_Position = ball_Distance + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+			    else
+				    resolved_Position = ball_Distance + Vector3.new(math.sin(tick()) * 35, 0, 0)
+			    end
+            else
+                if aura.is_spamming  then
+				    resolved_Position = target_Position + Vector3.new(0, 0, math.sin(tick()) * 28.5)
+			    else
+				    resolved_Position = target_Position + Vector3.new(math.sin(tick()) * 35, 0, 0)
+			    end
+            end
+
 			walk_to(resolved_Position)
-		else
-			move_ai_part(Vector3.new(10000, 10000, 10000))
 		end
 	end)
 end)
@@ -475,14 +483,18 @@ task.spawn(function()
 		aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.25
 		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
 
-		aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 14 and ball_Distance < 15))
+		if target_isMoving then
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 15.5 and ball_Distance < 10)) and ball_Dot > 0
+        else
+            aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 21.5 and ball_Distance < 10))
+        end
 
 		if ball_Dot < -0.2 then
 			aura.ball_Warping = tick()
 		end
 
 		task.spawn(function()
-			if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 12 then
+			if (tick() - aura.ball_Warping) >= 0.15 + target_distance_Limited - ball_speed_Limited or ball_Distance < 10 then
 				aura.is_ball_Warping = false
 				return
 			end
