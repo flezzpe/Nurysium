@@ -13,8 +13,10 @@ local ui_data = {
 local color_shader = Instance.new("ColorCorrectionEffect", workspace.CurrentCamera)
 local blur_shader = Instance.new("BlurEffect", workspace.CurrentCamera)
 
-blur_shader.Size = 256
-color_shader.Saturation = -1
+if not game:GetService("UserInputService").TouchEnabled then
+	blur_shader.Size = 256
+	color_shader.Saturation = -1
+end
 
 local function animate_elements(speed: number)
 	ui.Background["functions_frame"].UIListLayout.Padding = UDim.new(0.5, 0)
