@@ -19,10 +19,10 @@ if not game:GetService("UserInputService").TouchEnabled then
 end
 
 local function animate_elements(speed: number)
-	ui.Background["functions_frame"].UIListLayout.Padding = UDim.new(0.5, 0)
+	ui.Background["functions_frame"].UIListLayout.Padding = UDim.new(0.45, 0)
 
 	tween_service:Create(ui.Background["functions_frame"].UIListLayout, TweenInfo.new(speed, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-		Padding = UDim.new(0.02, 0)
+		Padding = UDim.new(0.015, 0)
 	}):Play()
 end
 
@@ -34,7 +34,7 @@ function nurysium: open()
 	tween_service:Create(blur_shader, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		Size = 256
 	}):Play()
-	
+
 	task.delay(0.65, function()
 		ui.Background["functions_frame"].Visible = true
 		ui.Background.Sections.Visible = true
@@ -65,7 +65,7 @@ function nurysium: close()
 	tween_service:Create(blur_shader, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		Size = 0
 	}):Play()
-	
+
 	task.delay(0.35, function()
 		ui.Background["functions_frame"].Visible = false
 		ui.Background.Sections.Visible = false
@@ -98,13 +98,11 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	local UICorner = Instance.new("UICorner")
 	local Sections = Instance.new("Frame")
 	local UICorner_2 = Instance.new("UICorner")
-	local CornerFix = Instance.new("Frame")
-	local UIGradient = Instance.new("UIGradient")
 	local real_sections = Instance.new("Frame")
 	local UIListLayout = Instance.new("UIListLayout")
+	local UIGradient = Instance.new("UIGradient")
+	local CornerFix = Instance.new("Frame")
 	local UIGradient_2 = Instance.new("UIGradient")
-	local logo = Instance.new("ImageButton")
-	local UIGradient_3 = Instance.new("UIGradient")
 	local Title = Instance.new("TextLabel")
 	local functions_frame = Instance.new("ScrollingFrame")
 	local UIPadding = Instance.new("UIPadding")
@@ -113,8 +111,11 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	local UICorner_3 = Instance.new("UICorner")
 	local ImageLabel = Instance.new("ImageLabel")
 	local Bar = Instance.new("TextBox")
+	local UIStroke = Instance.new("UIStroke")
 	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 	local UIGradient_4 = Instance.new("UIGradient")
+	local BackgroundShadow = Instance.new("ImageLabel")
+	local UIStroke_2 = Instance.new("UIStroke")
 
 	ui.Name = name
 	ui.Parent = parent
@@ -122,14 +123,14 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
 	Background.Name = "Background"
 	Background.Parent = ui
-	Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Background.BackgroundColor3 = Color3.fromRGB(234, 234, 234)
 	Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Background.BorderSizePixel = 0
-	Background.Position = UDim2.new(0.4, 0, 0.3, 0)
+	Background.Position = UDim2.new(0.387321681, 0, 0.332433224, 0)
 	Background.Size = UDim2.new(0, 655, 0, 325)
 	Background.ZIndex = 5
 
-	UICorner.CornerRadius = UDim.new(0, 15)
+	UICorner.CornerRadius = UDim.new(0, 12)
 	UICorner.Parent = Background
 
 	Sections.Name = "Sections"
@@ -137,23 +138,12 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Sections.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Sections.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Sections.BorderSizePixel = 0
-	Sections.Position = UDim2.new(-0.00157281861, 0, 0, 0)
-	Sections.Size = UDim2.new(0.283998042, 0, 1, 0)
+	Sections.Position = UDim2.new(-2.03027554e-07, 0, 0, 0)
+	Sections.Size = UDim2.new(0.282425195, 0, 1, 0)
+	Sections.ZIndex = 5
 
 	UICorner_2.CornerRadius = UDim.new(0, 15)
 	UICorner_2.Parent = Sections
-
-	CornerFix.Name = "CornerFix"
-	CornerFix.Parent = Sections
-	CornerFix.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	CornerFix.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	CornerFix.BorderSizePixel = 0
-	CornerFix.Position = UDim2.new(0.918615103, 0, 0, 0)
-	CornerFix.Size = UDim2.new(0.0813859329, 0, 1, 0)
-
-	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(37, 34, 45)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(35, 33, 43))}
-	UIGradient.Rotation = -94
-	UIGradient.Parent = CornerFix
 
 	real_sections.Name = "real_sections"
 	real_sections.Parent = Sections
@@ -163,29 +153,28 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	real_sections.BorderSizePixel = 0
 	real_sections.Position = UDim2.new(0.249553874, 0, 0.170943886, 0)
 	real_sections.Size = UDim2.new(0, 107, 0, 230)
-	real_sections.ZIndex = 5
+	real_sections.ZIndex = 6
 
 	UIListLayout.Parent = real_sections
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Padding = UDim.new(0.0450000018, 0)
 
-	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(39, 36, 47)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(33, 31, 40))}
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
+	UIGradient.Rotation = -113
+	UIGradient.Parent = Sections
+
+	CornerFix.Name = "CornerFix"
+	CornerFix.Parent = Sections
+	CornerFix.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	CornerFix.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CornerFix.BorderSizePixel = 0
+	CornerFix.Position = UDim2.new(0.0952685028, 0, 0, 0)
+	CornerFix.Size = UDim2.new(0.904730499, 0, 1, 0)
+	CornerFix.ZIndex = 5
+
+	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
 	UIGradient_2.Rotation = -113
-	UIGradient_2.Parent = Sections
-
-	logo.Name = "logo"
-	logo.Parent = Sections
-	logo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	logo.BackgroundTransparency = 1.000
-	logo.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	logo.BorderSizePixel = 0
-	logo.Position = UDim2.new(0.710735202, 0, 0.664615393, 0)
-	logo.Size = UDim2.new(0, 100, 0, 100)
-	logo.ZIndex = 2
-	logo.Image = "rbxassetid://17441779136"
-
-	UIGradient_3.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0.00, 0.00), NumberSequenceKeypoint.new(0.51, 1.00), NumberSequenceKeypoint.new(1.00, 1.00)}
-	UIGradient_3.Parent = logo
+	UIGradient_2.Parent = CornerFix
 
 	Title.Name = "Title"
 	Title.Parent = Background
@@ -195,56 +184,13 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Title.BorderSizePixel = 0
 	Title.Position = UDim2.new(0.0269060303, 0, 0.035999544, 0)
 	Title.Size = UDim2.new(0, 70, 0, 20)
-	Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
-
-	Title.TextSize = 8.000
+	Title.ZIndex = 5
+	Title.Font = Enum.Font.GothamBold
 	Title.Text = name
-	Title.TextScaled = true
-
-	-- No, I wrote that script myself, why are you trying to find those lines 😄? 
-	task.defer(function()
-		while task.wait(60) do
-			Title.Text = name
-			Title.TextScaled = true
-			task.wait(40)
-			Title.TextScaled = false
-			Title.Text = 'https://dsc.gg/nurysium'
-		end
-	end)
-
 	Title.TextColor3 = Color3.fromRGB(231, 231, 243)
+	Title.TextScaled = true
+	Title.TextSize = 14.000
 	Title.TextWrapped = true
-
-	local UIGradient = Instance.new("UIGradient")
-
-	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(141, 130, 170)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(208, 196, 252))}
-	UIGradient.Offset = Vector2.new(0.00999999978, 0)
-	UIGradient.Rotation = -113
-	UIGradient.Parent = Title
-
-	local function gradientMover()
-		local script = Instance.new('LocalScript', UIGradient)
-		local animation_done = true
-
-		while animation_done do
-			animation_done = false
-
-			game:GetService('TweenService'):Create(UIGradient, TweenInfo.new(3, Enum.EasingStyle.Quad), {
-				Rotation = 53
-			}):Play()
-
-			task.wait(3)
-
-			game:GetService('TweenService'):Create(UIGradient, TweenInfo.new(3, Enum.EasingStyle.Quad), {
-				Rotation = -180
-			}):Play()
-
-			task.wait(3)
-			animation_done = true
-		end
-
-	end
-	coroutine.wrap(gradientMover)()
 
 	functions_frame.Name = "functions_frame"
 	functions_frame.Parent = Background
@@ -255,6 +201,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	functions_frame.BorderSizePixel = 0
 	functions_frame.Position = UDim2.new(0.31407398, 0, 0.170943886, 0)
 	functions_frame.Size = UDim2.new(0, 397, 0, 254)
+	functions_frame.ZIndex = 5
+	functions_frame.ScrollBarImageColor3 = Color3.fromRGB(223, 223, 223)
 	functions_frame.ScrollBarThickness = 0
 
 	UIPadding.Parent = functions_frame
@@ -262,16 +210,17 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
 	UIListLayout_2.Parent = functions_frame
 	UIListLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	UIListLayout_2.Padding = UDim.new(0.0199999996, 0)
+	UIListLayout_2.Padding = UDim.new(0.0149999997, 0)
 
 	Search.Name = "Search"
 	Search.Parent = Background
-	Search.BackgroundColor3 = Color3.fromRGB(33, 32, 40)
+	Search.BackgroundColor3 = Color3.fromRGB(27, 31, 44)
+	Search.BackgroundTransparency = 0.500
 	Search.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Search.BorderSizePixel = 0
 	Search.Position = UDim2.new(0.775426149, 0, 0.0338461548, 0)
 	Search.Size = UDim2.new(0, 120, 0, 35)
-	Search.ZIndex = 10
+	Search.ZIndex = 5
 
 	UICorner_3.CornerRadius = UDim.new(0, 15)
 	UICorner_3.Parent = Search
@@ -297,8 +246,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Bar.Size = UDim2.new(0, 87, 0, 34)
 	Bar.SizeConstraint = Enum.SizeConstraint.RelativeXX
 	Bar.ZIndex = 7
-	Bar.ClearTextOnFocus = false
-	Bar.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+	Bar.Font = Enum.Font.GothamBold
 	Bar.PlaceholderText = "Search"
 	Bar.Text = ""
 	Bar.TextColor3 = Color3.fromRGB(231, 231, 243)
@@ -338,13 +286,32 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
 	coroutine.wrap(bar_handler)()
 
+	UIStroke.Parent = Search
+	UIStroke.Color = Color3.fromRGB(34, 34, 34)
+	UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
 	UIAspectRatioConstraint.Parent = Background
 	UIAspectRatioConstraint.AspectRatio = 1.850
 
-	UIGradient_4.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(30, 28, 39)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(24, 22, 31))}
-	UIGradient_4.Rotation = -113
+	UIGradient_4.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(21, 24, 33))}
+	UIGradient_4.Rotation = -88
 	UIGradient_4.Parent = Background
 
+	BackgroundShadow.Name = "BackgroundShadow"
+	BackgroundShadow.Parent = Background
+	BackgroundShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+	BackgroundShadow.BackgroundTransparency = 1.000
+	BackgroundShadow.Position = UDim2.new(0.499168396, 0, 0.492307693, 2)
+	BackgroundShadow.Size = UDim2.new(1.00498962, 142, 1.00923073, 142)
+	BackgroundShadow.Image = "rbxassetid://12817494724"
+	BackgroundShadow.ImageTransparency = 0.500
+	BackgroundShadow.ScaleType = Enum.ScaleType.Slice
+	BackgroundShadow.SliceCenter = Rect.new(85, 85, 427, 427)
+
+	UIStroke_2.Parent = Background
+	UIStroke_2.Color = Color3.fromRGB(85, 85, 85)
+	UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	
 	tween_service:Create(UIAspectRatioConstraint, TweenInfo.new(1.65, Enum.EasingStyle.Exponential), {AspectRatio = 1.850}):Play()
 	task.delay(0.25, function()
 		tween_service:Create(Title, TweenInfo.new(1.85, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -438,7 +405,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 end
 
 function nurysium: create_section(name: string, imageID: number)
-	task.wait(0.5)
+	task.wait(0.1)
 
 	local Example = Instance.new("TextButton", ui.Background.Sections.real_sections)
 	local ImageLabel = Instance.new("ImageLabel")
@@ -537,23 +504,21 @@ function nurysium: create_section(name: string, imageID: number)
 end
 
 function nurysium: create_toggle(name: string, section_name: string, callback)
-	task.wait(0.15)
+	task.wait(0.1)
 
 	callback = callback or function() end
 	local toggled = false
 
 	local Example = Instance.new("Frame")
 	local UICorner = Instance.new("UICorner")
-	local UIStroke = Instance.new("UIStroke")
-	local UIGradient = Instance.new("UIGradient")
 	local Hitbox = Instance.new("TextButton")
-	local UIGradient_2 = Instance.new("UIGradient")
 	local Title = Instance.new("TextLabel")
 	local Toggle = Instance.new("Frame")
-	local Dot = Instance.new("Frame")
 	local UICorner_2 = Instance.new("UICorner")
+	local checkmark = Instance.new("ImageButton")
+	local UIStroke = Instance.new("UIStroke")
+	local UIGradient = Instance.new("UIGradient")
 	local UIStroke_2 = Instance.new("UIStroke")
-	local UICorner_3 = Instance.new("UICorner")
 
 	Example.Name = name
 	Example.Parent = ui.Background["functions_frame"]
@@ -567,15 +532,6 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 	UICorner.CornerRadius = UDim.new(0, 10)
 	UICorner.Parent = Example
 
-	UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	UIStroke.Color = Color3.fromRGB(255, 255, 255)
-	UIStroke.Thickness = 4
-	UIStroke.Parent = Example
-
-	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(39, 36, 47)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(46, 43, 56))}
-	UIGradient.Rotation = 36
-	UIGradient.Parent = UIStroke
-
 	Hitbox.Name = "Hitbox"
 	Hitbox.Parent = Example
 	Hitbox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -588,21 +544,17 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 	Hitbox.TextSize = 1.000
 	Hitbox.TextTransparency = 1.000
 
-	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(39, 36, 47)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(33, 31, 40))}
-	UIGradient_2.Rotation = -113
-	UIGradient_2.Parent = Example
-
 	Title.Name = "Title"
 	Title.Parent = Example
 	Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Title.BackgroundTransparency = 1.000
 	Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Title.BorderSizePixel = 0
-	Title.Position = UDim2.new(0.0449240729, 0, 0.275129884, 0)
+	Title.Position = UDim2.new(0.0449240431, 0, 0.275129795, 0)
 	Title.Size = UDim2.new(0, 140, 0, 20)
 	Title.ZIndex = 10
-	Title.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
-	Title.Text = name
+	Title.Font = Enum.Font.GothamBold
+	Title.Text = tostring(name)
 	Title.TextColor3 = Color3.fromRGB(231, 231, 243)
 	Title.TextScaled = true
 	Title.TextSize = 14.000
@@ -611,32 +563,41 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 
 	Toggle.Name = "Toggle"
 	Toggle.Parent = Example
-	Toggle.BackgroundColor3 = Color3.fromRGB(27, 24, 35)
+	Toggle.BackgroundColor3 = Color3.fromRGB(15, 18, 24)
 	Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Toggle.BorderSizePixel = 0
-	Toggle.Position = UDim2.new(0.841389358, 0, 0.279069781, 0)
-	Toggle.Size = UDim2.new(0, 38, 0, 18)
+	Toggle.Position = UDim2.new(0.902837157, 0, 0.251873642, 0)
+	Toggle.Size = UDim2.new(0, 21, 0, 20)
 	Toggle.ZIndex = 15
 
-	Dot.Name = "Dot"
-	Dot.Parent = Toggle
-	Dot.BackgroundColor3 = Color3.fromRGB(37, 35, 48)
-	Dot.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	Dot.BorderSizePixel = 0
-	Dot.Position = UDim2.new(0.149068192, 0, 0.22351414, 0)
-	Dot.Size = UDim2.new(0, 10, 0, 10)
-	Dot.ZIndex = 15
+	UICorner_2.CornerRadius = UDim.new(0, 5)
+	UICorner_2.Parent = Toggle
 
-	UICorner_2.CornerRadius = UDim.new(1, 0)
-	UICorner_2.Parent = Dot
+	checkmark.Name = "checkmark"
+	checkmark.Parent = Toggle
+	checkmark.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	checkmark.BackgroundTransparency = 1.000
+	checkmark.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	checkmark.BorderSizePixel = 0
+	checkmark.ImageTransparency = 1
+	checkmark.Position = UDim2.new(0.227271676, 0, 0.200000003, 0)
+	checkmark.Size = UDim2.new(0.545454562, 0, 0.600000024, 0)
+	checkmark.ZIndex = 15
+	checkmark.Image = "rbxassetid://9754130783"
 
+	UIStroke.Parent = Toggle
+	UIStroke.Color = Color3.fromRGB(29, 33, 45)
+	UIStroke.Transparency = 0.500
+	UIStroke.Thickness = 2.000
+	UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
+	UIGradient.Rotation = -9
+	UIGradient.Parent = Example
+
+	UIStroke_2.Parent = Example
+	UIStroke_2.Color = Color3.fromRGB(31, 31, 31)
 	UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	UIStroke_2.Color = Color3.fromRGB(40, 39, 45)
-	UIStroke_2.Thickness = 1.7999999523162842
-	UIStroke_2.Parent = Toggle
-
-	UICorner_3.CornerRadius = UDim.new(0, 10)
-	UICorner_3.Parent = Toggle
 
 	game:GetService("RunService").Heartbeat:Connect(function()
 		if not section_name:match(ui_data.current_section) and not table.find(search_table, name)then
@@ -653,38 +614,16 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 
 		if toggled then
 
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Position = UDim2.new(0.600, 0, 0.224, 0),
-				BackgroundColor3 = Color3.fromRGB(124, 120, 218)
-			}):Play()
-
-			tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Transparency = 0.5,
-				Color = Color3.fromRGB(59, 58, 151)
-			}):Play()
-
-			tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(62, 61, 174)
+			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+				ImageTransparency = 0.25,
 			}):Play()
 
 		else
 
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Position = UDim2.new(0.149, 0, 0.224, 0)
+			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+				ImageTransparency = 1,
 			}):Play()
-
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(37, 35, 48)
-			}):Play()
-
-			tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Transparency = 0,
-				Color = Color3.fromRGB(40, 39, 45)
-			}):Play()
-
-			tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(27, 24, 35)
-			}):Play()
+			
 		end
 	end)
 
@@ -695,38 +634,16 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 
 		if toggled then
 
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Position = UDim2.new(0.600, 0, 0.224, 0),
-				BackgroundColor3 = Color3.fromRGB(124, 120, 218)
-			}):Play()
-
-			tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Transparency = 0.5,
-				Color = Color3.fromRGB(59, 58, 151)
-			}):Play()
-
-			tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(62, 61, 174)
+			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+				ImageTransparency = 0.25,
 			}):Play()
 
 		else
 
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Position = UDim2.new(0.149, 0, 0.224, 0)
+			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
+				ImageTransparency = 1,
 			}):Play()
-
-			tween_service:Create(Dot, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(37, 35, 48)
-			}):Play()
-
-			tween_service:Create(UIStroke_2, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				Transparency = 0,
-				Color = Color3.fromRGB(40, 39, 45)
-			}):Play()
-
-			tween_service:Create(Toggle, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-				BackgroundColor3 = Color3.fromRGB(27, 24, 35)
-			}):Play()
+			
 		end
 	end)
 
