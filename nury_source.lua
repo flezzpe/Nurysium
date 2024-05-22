@@ -1,6 +1,6 @@
 --// nurysium recode
 
-local version = '0.2.8'
+local version = '0.3.0'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
@@ -380,14 +380,14 @@ task.defer(function()
                 if target_Distance > 10 then
                     resolved_Position = target_Position + (player_Position - target_Position).Unit * 8
                 else
-                    resolved_Position = target_Position + (player_Position - target_Position).Unit * 15
+                    resolved_Position = target_Position + (player_Position - target_Position).Unit * 25
                 end
             else
                 resolved_Position = target_Position - target_LookVector * (math.random(8.5, 13.5) + (ball_Distance / math.random(8, 20)))
             end
 
             if (player_Position - target_Position).Magnitude < 8 then
-                resolved_Position = target_Position + (player_Position - target_Position).Unit * 25
+                resolved_Position = target_Position + (player_Position - target_Position).Unit * 35
             end
 
             if ball_Distance < 8 then
@@ -398,7 +398,7 @@ task.defer(function()
                 resolved_Position = player_Position + (ball_Position - player_Position).Unit * 10
             end
 
-            walk_to(resolved_Position + Vector3.new(math.sin(tick()) * 6, 0, math.cos(tick()) * 6))
+            walk_to(resolved_Position + Vector3.new(math.sin(tick()) * 10, 0, math.cos(tick()) * 10))
         end
     end)
 end)
@@ -495,8 +495,8 @@ task.spawn(function()
 		local target_isMoving = target_Velocity.Magnitude > 0
 		local target_Dot = target_isMoving and math.max(target_Direction:Dot(target_Velocity.Unit), 0)
 
-		aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.25
-		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 4, 9.5)
+		aura.spam_Range = math.max(ping / 10, 10.5) + ball_Speed / 6.15
+		aura.parry_Range = math.max(math.max(ping, 3.5) + ball_Speed / 3.25, 9.5)
 
 		if target_isMoving then
             aura.is_spamming = (aura.hit_Count > 1 or (target_Distance < 11 and ball_Distance < 10)) and ball_Dot > -0.25
