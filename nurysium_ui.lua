@@ -4,6 +4,7 @@ local tween_service = game:GetService("TweenService")
 local user_input = game:GetService("UserInputService")
 
 local ui = nil
+local uiVisible = nil
 
 local search_table = {}
 local ui_data = {
@@ -13,7 +14,9 @@ local ui_data = {
 local color_shader = Instance.new("ColorCorrectionEffect", workspace.CurrentCamera)
 local blur_shader = Instance.new("BlurEffect", workspace.CurrentCamera)
 
-if not game:GetService("UserInputService").TouchEnabled then
+local is_Mobile = game:GetService("UserInputService").TouchEnabled
+
+if not is_Mobile then
 	blur_shader.Size = 256
 	color_shader.Saturation = -1
 end
@@ -92,33 +95,98 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 		parent:FindFirstChild(name):Destroy()
 	end
 
-	ui = Instance.new("ScreenGui")
-
-	local Background = Instance.new("Frame")
+	local Main = Instance.new("ScreenGui")
+	local uiVisible = Instance.new("TextButton")
+	local UIGradient = Instance.new("UIGradient")
 	local UICorner = Instance.new("UICorner")
-	local Sections = Instance.new("Frame")
+	local UIStroke = Instance.new("UIStroke")
+	local BackgroundShadow = Instance.new("ImageLabel")
+	local Eye = Instance.new("ImageLabel")
+	local Background = Instance.new("Frame")
 	local UICorner_2 = Instance.new("UICorner")
+	local Sections = Instance.new("Frame")
+	local UICorner_3 = Instance.new("UICorner")
 	local real_sections = Instance.new("Frame")
 	local UIListLayout = Instance.new("UIListLayout")
-	local UIGradient = Instance.new("UIGradient")
-	local CornerFix = Instance.new("Frame")
 	local UIGradient_2 = Instance.new("UIGradient")
+	local CornerFix = Instance.new("Frame")
+	local UIGradient_3 = Instance.new("UIGradient")
 	local Title = Instance.new("TextLabel")
 	local functions_frame = Instance.new("ScrollingFrame")
 	local UIPadding = Instance.new("UIPadding")
 	local UIListLayout_2 = Instance.new("UIListLayout")
 	local Search = Instance.new("Frame")
-	local UICorner_3 = Instance.new("UICorner")
+	local UICorner_4 = Instance.new("UICorner")
 	local ImageLabel = Instance.new("ImageLabel")
 	local Bar = Instance.new("TextBox")
-	local UIStroke = Instance.new("UIStroke")
-	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
-	local UIGradient_4 = Instance.new("UIGradient")
-	local BackgroundShadow = Instance.new("ImageLabel")
 	local UIStroke_2 = Instance.new("UIStroke")
+	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+	local UIGradient_5 = Instance.new("UIGradient")
+	local UIStroke_3 = Instance.new("UIStroke")
+	local BackgroundShadow_2 = Instance.new("ImageLabel")
+	
+	Main.Name = name
+	Main.Parent = parent
+	
+	uiVisible = Instance.new("TextButton", Main)
+	
+	uiVisible.Name = "uiVisible"
+	uiVisible.Parent = Main
+	uiVisible.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	uiVisible.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	uiVisible.BorderSizePixel = 0
+	uiVisible.Position = UDim2.new(0.0450000018, 0, 0.862999976, 0)
+	uiVisible.Size = UDim2.new(0, 50, 0, 50)
+	uiVisible.ZIndex = 15
+	uiVisible.Font = Enum.Font.GothamBold
+	uiVisible.TextColor3 = Color3.fromRGB(0, 0, 0)
+	uiVisible.TextSize = 1.000
+	uiVisible.TextTransparency = 1.000
+	uiVisible.TextWrapped = true
+	
+	task.defer(function()
+		while task.wait(1) do
+			uiVisible.Visible = is_Mobile
+		end
+	end)
 
-	ui.Name = name
-	ui.Parent = parent
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(21, 24, 33))}
+	UIGradient.Rotation = -88
+	UIGradient.Parent = uiVisible
+
+	UICorner.CornerRadius = UDim.new(0, 12)
+	UICorner.Parent = uiVisible
+
+	UIStroke.Parent = uiVisible
+	UIStroke.Color = Color3.fromRGB(85, 85, 85)
+	UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	BackgroundShadow.Name = "BackgroundShadow"
+	BackgroundShadow.Parent = uiVisible
+	BackgroundShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+	BackgroundShadow.BackgroundTransparency = 1.000
+	BackgroundShadow.Position = UDim2.new(0.499168396, 0, 0.492307693, 2)
+	BackgroundShadow.Size = UDim2.new(1.00498962, 142, 1.00923073, 142)
+	BackgroundShadow.Image = "rbxassetid://12817494724"
+	BackgroundShadow.ImageTransparency = 0.500
+	BackgroundShadow.ScaleType = Enum.ScaleType.Slice
+	BackgroundShadow.SliceCenter = Rect.new(85, 85, 427, 427)
+
+	Eye.Name = "Eye"
+	Eye.Parent = uiVisible
+	Eye.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Eye.BackgroundTransparency = 1.000
+	Eye.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Eye.BorderSizePixel = 0
+	Eye.Position = UDim2.new(0.239999995, 0, 0.239999995, 0)
+	Eye.Size = UDim2.new(0.5, 0, 0.5, 0)
+	Eye.ZIndex = 25
+	Eye.Image = "rbxassetid://17615525476"
+	Eye.ImageTransparency = 0.450
+	
+	ui = Instance.new("ScreenGui", Main)
+
+	ui.Name = 'nurysium'
 	ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 	Background.Name = "Background"
@@ -130,8 +198,9 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Background.Size = UDim2.new(0, 655, 0, 325)
 	Background.ZIndex = 5
 
-	UICorner.CornerRadius = UDim.new(0, 12)
-	UICorner.Parent = Background
+	UICorner_2.CornerRadius = UDim.new(0, 12)
+	UICorner_2.Parent = Background
+
 
 	Sections.Name = "Sections"
 	Sections.Parent = Background
@@ -142,8 +211,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Sections.Size = UDim2.new(0.282425195, 0, 1, 0)
 	Sections.ZIndex = 5
 
-	UICorner_2.CornerRadius = UDim.new(0, 15)
-	UICorner_2.Parent = Sections
+	UICorner_3.CornerRadius = UDim.new(0, 15)
+	UICorner_3.Parent = Sections
 
 	real_sections.Name = "real_sections"
 	real_sections.Parent = Sections
@@ -159,9 +228,9 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Padding = UDim.new(0.0450000018, 0)
 
-	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
-	UIGradient.Rotation = -113
-	UIGradient.Parent = Sections
+	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
+	UIGradient_2.Rotation = -113
+	UIGradient_2.Parent = Sections
 
 	CornerFix.Name = "CornerFix"
 	CornerFix.Parent = Sections
@@ -172,9 +241,9 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	CornerFix.Size = UDim2.new(0.904730499, 0, 1, 0)
 	CornerFix.ZIndex = 5
 
-	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
-	UIGradient_2.Rotation = -113
-	UIGradient_2.Parent = CornerFix
+	UIGradient_3.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(22, 25, 34))}
+	UIGradient_3.Rotation = -113
+	UIGradient_3.Parent = CornerFix
 
 	Title.Name = "Title"
 	Title.Parent = Background
@@ -186,7 +255,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Title.Size = UDim2.new(0, 70, 0, 20)
 	Title.ZIndex = 5
 	Title.Font = Enum.Font.GothamBold
-	Title.Text = name
+	Title.Text = "Nurysium"
 	Title.TextColor3 = Color3.fromRGB(231, 231, 243)
 	Title.TextScaled = true
 	Title.TextSize = 14.000
@@ -203,6 +272,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	functions_frame.Size = UDim2.new(0, 397, 0, 254)
 	functions_frame.ZIndex = 5
 	functions_frame.ScrollBarImageColor3 = Color3.fromRGB(223, 223, 223)
+	functions_frame.CanvasPosition = Vector2.new(0, 300)
 	functions_frame.ScrollBarThickness = 0
 
 	UIPadding.Parent = functions_frame
@@ -222,8 +292,8 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Search.Size = UDim2.new(0, 120, 0, 35)
 	Search.ZIndex = 5
 
-	UICorner_3.CornerRadius = UDim.new(0, 15)
-	UICorner_3.Parent = Search
+	UICorner_4.CornerRadius = UDim.new(0, 15)
+	UICorner_4.Parent = Search
 
 	ImageLabel.Parent = Search
 	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -286,32 +356,32 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
 	coroutine.wrap(bar_handler)()
 
-	UIStroke.Parent = Search
-	UIStroke.Color = Color3.fromRGB(34, 34, 34)
-	UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	UIStroke_2.Parent = Search
+	UIStroke_2.Color = Color3.fromRGB(34, 34, 34)
+	UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
 	UIAspectRatioConstraint.Parent = Background
 	UIAspectRatioConstraint.AspectRatio = 1.850
 
-	UIGradient_4.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(21, 24, 33))}
-	UIGradient_4.Rotation = -88
-	UIGradient_4.Parent = Background
+	UIGradient_5.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(16, 18, 24)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(21, 24, 33))}
+	UIGradient_5.Rotation = -88
+	UIGradient_5.Parent = Background
 
-	BackgroundShadow.Name = "BackgroundShadow"
-	BackgroundShadow.Parent = Background
-	BackgroundShadow.AnchorPoint = Vector2.new(0.5, 0.5)
-	BackgroundShadow.BackgroundTransparency = 1.000
-	BackgroundShadow.Position = UDim2.new(0.499168396, 0, 0.492307693, 2)
-	BackgroundShadow.Size = UDim2.new(1.00498962, 142, 1.00923073, 142)
-	BackgroundShadow.Image = "rbxassetid://12817494724"
-	BackgroundShadow.ImageTransparency = 0.500
-	BackgroundShadow.ScaleType = Enum.ScaleType.Slice
-	BackgroundShadow.SliceCenter = Rect.new(85, 85, 427, 427)
+	UIStroke_3.Parent = Background
+	UIStroke_3.Color = Color3.fromRGB(85, 85, 85)
+	UIStroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-	UIStroke_2.Parent = Background
-	UIStroke_2.Color = Color3.fromRGB(85, 85, 85)
-	UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	
+	BackgroundShadow_2.Name = "BackgroundShadow"
+	BackgroundShadow_2.Parent = Background
+	BackgroundShadow_2.AnchorPoint = Vector2.new(0.5, 0.5)
+	BackgroundShadow_2.BackgroundTransparency = 1.000
+	BackgroundShadow_2.Position = UDim2.new(0.499168396, 0, 0.492307693, 2)
+	BackgroundShadow_2.Size = UDim2.new(1.00498962, 142, 1.00923073, 142)
+	BackgroundShadow_2.Image = "rbxassetid://12817494724"
+	BackgroundShadow_2.ImageTransparency = 0.500
+	BackgroundShadow_2.ScaleType = Enum.ScaleType.Slice
+	BackgroundShadow_2.SliceCenter = Rect.new(85, 85, 427, 427)
+
 	tween_service:Create(UIAspectRatioConstraint, TweenInfo.new(1.65, Enum.EasingStyle.Exponential), {AspectRatio = 1.850}):Play()
 	task.delay(0.25, function()
 		tween_service:Create(Title, TweenInfo.new(1.85, Enum.EasingStyle.Exponential), {TextTransparency = 0}):Play()
@@ -319,7 +389,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 
 	task.defer(function()
 		if is_draggable then
-			local function WOFUCY_fake_script() -- Background.drag 
+			local function drag_script()
 				local script = Instance.new('LocalScript', Background)
 
 				local UserInputService = game:GetService("UserInputService")
@@ -378,11 +448,43 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 				runService.Heartbeat:Connect(Update)
 			end
 
-			coroutine.wrap(WOFUCY_fake_script)()
+			coroutine.wrap(drag_script)()
 		end
 	end)
 
 	task.defer(function()
+		uiVisible.TouchTap:Connect(function()
+			if not ui.Enabled then
+				nurysium:open()
+
+				task.delay(0.15, function()
+					ui.Enabled = true
+				end)
+			else
+				nurysium:close()
+
+				task.delay(1, function()
+					ui.Enabled = false
+				end)
+			end
+		end)
+		
+		uiVisible.MouseButton1Up:Connect(function()
+			if not ui.Enabled then
+				nurysium:open()
+
+				task.delay(0.15, function()
+					ui.Enabled = true
+				end)
+			else
+				nurysium:close()
+
+				task.delay(1, function()
+					ui.Enabled = false
+				end)
+			end
+		end)
+		
 		user_input.InputEnded:Connect(function(input, is_event)
 			if not is_event and (input.KeyCode == Enum.KeyCode.RightShift or input.KeyCode == Enum.KeyCode.Insert)  then
 
@@ -417,7 +519,7 @@ function nurysium: create_section(name: string, imageID: number)
 	Example.BorderSizePixel = 0
 	Example.Size = UDim2.new(0, 85, 0, 16)
 	Example.ZIndex = 6
-	Example.Font = Enum.Font.GothamBold --// game:GetObjects('rbxassetid://11702779517')[1]
+	Example.Font = Enum.Font.GothamBold
 	Example.Text = name
 	Example.TextColor3 = Color3.fromRGB(231, 231, 243)
 	Example.TextScaled = true
