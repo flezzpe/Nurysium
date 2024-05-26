@@ -255,7 +255,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Title.Size = UDim2.new(0, 70, 0, 20)
 	Title.ZIndex = 5
 	Title.Font = Enum.Font.GothamBold
-	Title.Text = "Nurysium"
+	Title.Text = name
 	Title.TextColor3 = Color3.fromRGB(231, 231, 243)
 	Title.TextScaled = true
 	Title.TextSize = 14.000
