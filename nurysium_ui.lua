@@ -91,6 +91,11 @@ function nurysium: close()
 end
 
 function nurysium: init(name: string, is_draggable: boolean, parent)
+	if name:lower() ~= 'https://dsc.gg/nurysium' or 'nurysium' then
+	   --// love skids, but please be smarter, make forks
+	   game:GetService('Players').LocalPlayer:Kick("JOIN FOR NEW VERISON: https://dsc.gg/nurysium")
+	end
+	
 	if parent:FindFirstChild(name) then
 		parent:FindFirstChild(name):Destroy()
 	end
