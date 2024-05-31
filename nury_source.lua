@@ -4,6 +4,7 @@ local version = '0.3.0'
 
 print('nurysium llc. - https://dsc.gg/nurysium')
 print(version)
+warn('use new version...')
 
 setfpscap(165)
 
