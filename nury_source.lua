@@ -45,7 +45,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/flezz
 task.wait(0.5)
 
 --// Yes, you can rename, I don't mind 🌠
-library:init("https://dsc.gg/nurysium", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
+library:init("Free Version", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
 
 library:create_section("Combat", 17440545793)
 library:create_section("World", 17440865331)
