@@ -29,10 +29,6 @@ function notify.init(parent)
 end
 
 function notify.render_Notify(notfiy_text: string, image_ID: string, on_screen_Time: number)
-	if game:GetService("UserInputService").TouchEnabled then
-		return
-	end
-
 	local notify_Sound = Instance.new("Sound")
 
 	local Example = Instance.new("Frame")
