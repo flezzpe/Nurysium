@@ -2,16 +2,19 @@ local notify = {}
 
 local TweenService = game:GetService('TweenService')
 
-local nury_Hud = Instance.new('ScreenGui', game:GetService('CoreGui'))
-nury_Hud.Name = 'nury_Hud'
-
-local notify_List = Instance.new('Frame')
-notify_List.Name = 'notify_List'
-notify_List.Parent = nury_Hud
+local nury_Hud = nil
+local notify_List = nil
 
 function notify.init(parent: any)
 	local UIListLayout = Instance.new('UIListLayout')
+	
+	nury_Hud = Instance.new('ScreenGui')
+	nury_Hud.Name = 'nury_Hud'
 	nury_Hud.Parent = parent
+	
+	notify_List = Instance.new('Frame')
+	notify_List.Name = 'notify_List'
+	notify_List.Parent = nury_Hud
 
 	notify_List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	notify_List.BackgroundTransparency = 1.000
