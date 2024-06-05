@@ -1,19 +1,18 @@
 local notify = {}
 
-local TweenService = game:GetService('TweenService')
+local TweenService = game:GetService("TweenService")
 
-local nury_Hud = nil
 local notify_List = nil
 
-function notify.init(parent: any)
-	local UIListLayout = Instance.new('UIListLayout')
+function notify.init(parent)
+	local UIListLayout = Instance.new("UIListLayout")
+	local nury_Hud = Instance.new("ScreenGui")
 	
-	nury_Hud = Instance.new('ScreenGui')
-	nury_Hud.Name = 'nury_Hud'
+	nury_Hud.Name = "nury_Hud"
 	nury_Hud.Parent = parent
-	
-	notify_List = Instance.new('Frame')
-	notify_List.Name = 'notify_List'
+
+	notify_List = Instance.new("Frame")
+	notify_List.Name = "notify_List"
 	notify_List.Parent = nury_Hud
 
 	notify_List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -29,25 +28,25 @@ function notify.init(parent: any)
 	UIListLayout.Padding = UDim.new(0.0149999997, 0)
 end
 
-function notify.render_Notify(text: string, image_ID: string, on_screen_Time: number)
-	if game:GetService('UserInputService').TouchEnabled then
+function notify.render_Notify(notfiy_text: string, image_ID: string, on_screen_Time: number)
+	if game:GetService("UserInputService").TouchEnabled then
 		return
 	end
 
-	local notify_Sound = Instance.new('Sound')
+	local notify_Sound = Instance.new("Sound")
 
-	local Example = Instance.new('Frame')
-	local UICorner = Instance.new('UICorner')
-	local Shadow = Instance.new('ImageLabel')
-	local Data = Instance.new('Folder')
-	local Icon = Instance.new('ImageLabel')
-	local Text = Instance.new('TextLabel')
-	local UIGradient = Instance.new('UIGradient')
-	local Line = Instance.new('Frame')
-	local UIAspectRatioConstraint = Instance.new('UIAspectRatioConstraint')
-	local UIAspectRatioConstraint_2 = Instance.new('UIAspectRatioConstraint')
+	local Example = Instance.new("Frame")
+	local UICorner = Instance.new("UICorner")
+	local Shadow = Instance.new("ImageLabel")
+	local Data = Instance.new("Folder")
+	local Icon = Instance.new("ImageLabel")
+	local Text = Instance.new("TextLabel")
+	local UIGradient = Instance.new("UIGradient")
+	local Line = Instance.new("Frame")
+	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+	local UIAspectRatioConstraint_2 = Instance.new("UIAspectRatioConstraint")
 
-	Example.Name = text:lower()
+	Example.Name = notfiy_text:lower()
 	Example.Parent = notify_List
 	Example.BackgroundColor3 = Color3.fromRGB(43, 39, 47)
 	Example.BackgroundTransparency = 0.350
@@ -57,30 +56,30 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	Example.Size = UDim2.new(0.62932235, 0, 0.0854922757, 0)
 
 	notify_Sound.Parent = Example
-	notify_Sound.SoundId = 'rbxassetid://8458408918'
+	notify_Sound.SoundId = "rbxassetid://8458408918"
 	notify_Sound.Volume = 0.1
 	notify_Sound:Play()
 
 	UICorner.CornerRadius = UDim.new(0, 9)
 	UICorner.Parent = Example
 
-	Shadow.Name = 'Shadow'
+	Shadow.Name = "Shadow"
 	Shadow.Parent = Example
 	Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
 	Shadow.BackgroundTransparency = 1.000
 	Shadow.Position = UDim2.new(0.5, 0, 0.5, 2)
 	Shadow.Size = UDim2.new(1, 137, 1, 137)
 	Shadow.ZIndex = 0
-	Shadow.Image = 'rbxassetid://12817518992'
+	Shadow.Image = "rbxassetid://12817518992"
 	Shadow.ImageColor3 = Color3.fromRGB(223, 200, 243)
 	Shadow.ImageTransparency = 1
 	Shadow.ScaleType = Enum.ScaleType.Slice
 	Shadow.SliceCenter = Rect.new(85, 85, 427, 427)
 
-	Data.Name = 'Data'
+	Data.Name = "Data"
 	Data.Parent = Example
 
-	Icon.Name = 'Icon'
+	Icon.Name = "Icon"
 	Icon.Parent = Data
 	Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Icon.BackgroundTransparency = 1.000
@@ -93,13 +92,13 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	if image_ID:len() > 1 then
 		Icon.Image = `rbxassetid://{image_ID}`
 	else
-		Icon.Image = 'rbxassetid://15428182962'
+		Icon.Image = "rbxassetid://15428182962"
 	end
 
 	Icon.ImageColor3 = Color3.fromRGB(223, 200, 243)
 	Icon.ImageTransparency = 1
 
-	Text.Name = 'Text'
+	Text.Name = "Text"
 	Text.Parent = Data
 	Text.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Text.BackgroundTransparency = 1.000
@@ -109,7 +108,7 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	Text.Size = UDim2.new(0.80398488, 0, 1.00000322, 0)
 	Text.ZIndex = 5
 	Text.Font = Enum.Font.GothamBold
-	Text.Text = text
+	Text.Text = notfiy_text
 	Text.TextColor3 = Color3.fromRGB(223, 200, 243)
 	Text.TextSize = 18.000
 	Text.TextTransparency = 1
@@ -119,7 +118,7 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	UIGradient.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0.00, 0.00), NumberSequenceKeypoint.new(0.65, 0.45), NumberSequenceKeypoint.new(1.00, 1.00)}
 	UIGradient.Parent = Text
 
-	Line.Name = 'Line'
+	Line.Name = "Line"
 	Line.Parent = Example
 	Line.BackgroundColor3 = Color3.fromRGB(223, 200, 243)
 	Line.BackgroundTransparency = 1
@@ -185,7 +184,7 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 		}):Play()
 
 		task.delay(on_screen_Time + 1, function()
-			game:GetService('Debris'):AddItem(Example, 0)
+			game:GetService("Debris"):AddItem(Example, 0)
 		end)
 	end)
 end
