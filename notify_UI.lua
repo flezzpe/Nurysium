@@ -2,7 +2,7 @@ local notify = {}
 
 local TweenService = game:GetService('TweenService')
 
-local nury_Hud = Instance.new('ScreenGui')
+local nury_Hud = Instance.new('ScreenGui', game:GetService('CoreGui'))
 nury_Hud.Name = 'nury_Hud'
 
 local notify_List = Instance.new('Frame')
@@ -11,7 +11,6 @@ notify_List.Parent = nury_Hud
 
 function notify.init(parent: any)
 	local UIListLayout = Instance.new('UIListLayout')
-	
 	nury_Hud.Parent = parent
 
 	notify_List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -31,9 +30,9 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	if game:GetService('UserInputService').TouchEnabled then
 		return
 	end
-	
+
 	local notify_Sound = Instance.new('Sound')
-	
+
 	local Example = Instance.new('Frame')
 	local UICorner = Instance.new('UICorner')
 	local Shadow = Instance.new('ImageLabel')
@@ -53,7 +52,7 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	Example.BorderSizePixel = 0
 	Example.Position = UDim2.new(0.254966736, 0, 0, 0)
 	Example.Size = UDim2.new(0.62932235, 0, 0.0854922757, 0)
-	
+
 	notify_Sound.Parent = Example
 	notify_Sound.SoundId = 'rbxassetid://8458408918'
 	notify_Sound.Volume = 0.1
@@ -87,13 +86,13 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	Icon.Position = UDim2.new(0.0409145541, 0, 0.168862924, 0)
 	Icon.Size = UDim2.new(0.0907369405, 0, 0.629204273, 0)
 	Icon.ZIndex = 6
-	
+
 	if image_ID:len() > 1 then
 		Icon.Image = `rbxassetid://{image_ID}`
 	else
 		Icon.Image = 'rbxassetid://15428182962'
 	end
-	
+
 	Icon.ImageColor3 = Color3.fromRGB(223, 200, 243)
 	Icon.ImageTransparency = 1
 
@@ -132,7 +131,7 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	UIAspectRatioConstraint_2.Parent = Example
 	UIAspectRatioConstraint_2.AspectRatio = 0.01
 	UIAspectRatioConstraint_2.DominantAxis = Enum.DominantAxis.Height
-	
+
 	TweenService:Create(UIAspectRatioConstraint_2, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		AspectRatio = 7.000
 	}):Play()
@@ -156,32 +155,32 @@ function notify.render_Notify(text: string, image_ID: string, on_screen_Time: nu
 	TweenService:Create(Line, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		BackgroundTransparency = 0.7
 	}):Play()
-	
+
 	task.delay(on_screen_Time, function()
 		TweenService:Create(UIAspectRatioConstraint_2, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			AspectRatio = 0
 		}):Play()
-		
+
 		TweenService:Create(Example, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			BackgroundTransparency = 1
 		}):Play()
-		
+
 		TweenService:Create(Shadow, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			ImageTransparency = 1
 		}):Play()
-		
+
 		TweenService:Create(Icon, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			ImageTransparency = 1
 		}):Play()
-		
+
 		TweenService:Create(Text, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			TextTransparency = 1
 		}):Play()
-		
+
 		TweenService:Create(Line, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 			BackgroundTransparency = 1
 		}):Play()
-		
+
 		task.delay(on_screen_Time + 1, function()
 			game:GetService('Debris'):AddItem(Example, 0)
 		end)
