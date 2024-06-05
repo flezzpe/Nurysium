@@ -95,32 +95,6 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 		parent:FindFirstChild(name):Destroy()
 	end
 
-	local girl_Image = Instance.new("Frame")
-	local girl = Instance.new("ImageLabel")
-	local girl_UIGradient = Instance.new("UIGradient")
-
-	girl_Image.Name = "girl_Image"
-	girl_Image.Parent = game.StarterGui.ScreenGui
-	girl_Image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	girl_Image.BackgroundTransparency = 1.000
-	girl_Image.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	girl_Image.BorderSizePixel = 0
-	girl_Image.Size = UDim2.new(1, 0, 1, 0)
-	
-	girl.Name = "girl"
-	girl.Parent = girl_Image
-	girl.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	girl.BackgroundTransparency = 1.000
-	girl.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	girl.BorderSizePixel = 0
-	girl.Position = UDim2.new(0.730189502, 0, 0.475565195, 0)
-	girl.Size = UDim2.new(0.269810468, 0, 0.524434745, 0)
-	girl.Image = "rbxassetid://17663188480"
-	
-	girl_UIGradient.Rotation = -74
-	girl_UIGradient.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0.00, 1.00), NumberSequenceKeypoint.new(0.17, 0.80), NumberSequenceKeypoint.new(0.34, 0.47), NumberSequenceKeypoint.new(0.43, 0.00), NumberSequenceKeypoint.new(0.50, 0.00), NumberSequenceKeypoint.new(0.68, 0.00), NumberSequenceKeypoint.new(0.90, 0.97), NumberSequenceKeypoint.new(1.00, 1.00)}
-	girl_UIGradient.Parent = girl
-
 	local Main = Instance.new("ScreenGui")
 	local uiVisible = Instance.new("TextButton")
 	local UIGradient = Instance.new("UIGradient")
@@ -150,12 +124,12 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	local UIGradient_5 = Instance.new("UIGradient")
 	local UIStroke_3 = Instance.new("UIStroke")
 	local BackgroundShadow_2 = Instance.new("ImageLabel")
-	
+
 	Main.Name = name
 	Main.Parent = parent
-	
+
 	uiVisible = Instance.new("TextButton", Main)
-	
+
 	uiVisible.Name = "uiVisible"
 	uiVisible.Parent = Main
 	uiVisible.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -204,11 +178,37 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	Eye.ZIndex = 25
 	Eye.Image = "rbxassetid://17615525476"
 	Eye.ImageTransparency = 0.450
-	
+
 	ui = Instance.new("ScreenGui", Main)
 
 	ui.Name = 'nurysium'
 	ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	
+	local girl_Image = Instance.new("Frame")
+	local girl = Instance.new("ImageLabel")
+	local girl_UIGradient = Instance.new("UIGradient")
+
+	girl_Image.Name = "girl_Image"
+	girl_Image.Parent = ui
+	girl_Image.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	girl_Image.BackgroundTransparency = 1.000
+	girl_Image.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	girl_Image.BorderSizePixel = 0
+	girl_Image.Size = UDim2.new(1, 0, 1, 0)
+
+	girl.Name = "girl"
+	girl.Parent = girl_Image
+	girl.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	girl.BackgroundTransparency = 1.000
+	girl.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	girl.BorderSizePixel = 0
+	girl.Position = UDim2.new(0.730189502, 0, 0.475565195, 0)
+	girl.Size = UDim2.new(0.269810468, 0, 0.524434745, 0)
+	girl.Image = "rbxassetid://17663188480"
+
+	girl_UIGradient.Rotation = -74
+	girl_UIGradient.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0.00, 1.00), NumberSequenceKeypoint.new(0.17, 0.80), NumberSequenceKeypoint.new(0.34, 0.47), NumberSequenceKeypoint.new(0.43, 0.00), NumberSequenceKeypoint.new(0.50, 0.00), NumberSequenceKeypoint.new(0.68, 0.00), NumberSequenceKeypoint.new(0.90, 0.97), NumberSequenceKeypoint.new(1.00, 1.00)}
+	girl_UIGradient.Parent = girl
 
 	Background.Name = "Background"
 	Background.Parent = ui
@@ -489,7 +489,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 				end)
 			end
 		end)
-		
+
 		uiVisible.MouseButton1Up:Connect(function()
 			if not ui.Enabled then
 				nurysium:open()
@@ -505,7 +505,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 				end)
 			end
 		end)
-		
+
 		user_input.InputEnded:Connect(function(input, is_event)
 			if not is_event and (input.KeyCode == Enum.KeyCode.RightShift or input.KeyCode == Enum.KeyCode.Insert)  then
 
@@ -746,7 +746,7 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 				ImageTransparency = 1,
 			}):Play()
-			
+
 		end
 	end)
 
@@ -766,7 +766,7 @@ function nurysium: create_toggle(name: string, section_name: string, callback)
 			tween_service:Create(checkmark, TweenInfo.new(0.45, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 				ImageTransparency = 1,
 			}):Play()
-			
+
 		end
 	end)
 
