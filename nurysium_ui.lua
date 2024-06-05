@@ -187,6 +187,7 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	local girl_Image = Instance.new("Frame")
 	local girl = Instance.new("ImageLabel")
 	local girl_UIGradient = Instance.new("UIGradient")
+	local girl_UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
 
 	girl_Image.Name = "girl_Image"
 	girl_Image.Parent = ui
@@ -209,6 +210,9 @@ function nurysium: init(name: string, is_draggable: boolean, parent)
 	girl_UIGradient.Rotation = -74
 	girl_UIGradient.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0.00, 1.00), NumberSequenceKeypoint.new(0.17, 0.80), NumberSequenceKeypoint.new(0.34, 0.47), NumberSequenceKeypoint.new(0.43, 0.00), NumberSequenceKeypoint.new(0.50, 0.00), NumberSequenceKeypoint.new(0.68, 0.00), NumberSequenceKeypoint.new(0.90, 0.97), NumberSequenceKeypoint.new(1.00, 1.00)}
 	girl_UIGradient.Parent = girl
+	
+	girl_UIAspectRatioConstraint.Parent = girl
+	girl_UIAspectRatioConstraint.AspectRatio = 0.87
 
 	Background.Name = "Background"
 	Background.Parent = ui
