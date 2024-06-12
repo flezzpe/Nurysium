@@ -113,7 +113,7 @@ function notify.render_Notify(notify_Text: string, on_screen_Time: number)
 		}):Play()
 
 		TweenService:Create(Example, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-			BackgroundTransparency = 0.550
+			BackgroundTransparency = 0.250
 		}):Play()
 
 		TweenService:Create(Icon, TweenInfo.new(0.55, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
