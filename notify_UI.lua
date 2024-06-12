@@ -46,7 +46,7 @@ function notify.render_Notify(notify_Text: string, on_screen_Time: number)
 
 		Example.Name = "Example"
 		Example.Parent = notify_List
-		Example.BackgroundColor3 = Color3.fromRGB(41, 67, 78)
+		Example.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 		Example.BackgroundTransparency = 1
 		Example.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Example.BorderSizePixel = 0
