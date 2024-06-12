@@ -69,7 +69,7 @@ function notify.render_Notify(notify_Text: string, on_screen_Time: number)
 		Icon.Size = UDim2.new(0.0907369405, 0, 0.629204273, 0)
 		Icon.ZIndex = 6
 		Icon.Image = "rbxassetid://17745044731"
-		Icon.ImageColor3 = Color3.fromRGB(141, 194, 225)
+		Icon.ImageColor3 = Color3.fromRGB(215, 215, 215)
 		Icon.ImageTransparency = 1
 
 		Text.Name = "Text"
@@ -83,7 +83,7 @@ function notify.render_Notify(notify_Text: string, on_screen_Time: number)
 		Text.ZIndex = 5
 		Text.Font = Enum.Font.GothamBold
 		Text.Text = notify_Text
-		Text.TextColor3 = Color3.fromRGB(141, 194, 225)
+		Text.TextColor3 = Color3.fromRGB(215, 215, 215)
 		Text.TextSize = 21.000
 		Text.TextTransparency = 1
 		Text.TextWrapped = true
