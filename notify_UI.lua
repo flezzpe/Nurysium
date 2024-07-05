@@ -109,10 +109,6 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 	task.delay(draw_time, function()
 		notify_lib.notify_count -= 1
 
-		TweenService:Create(background, TweenInfo.new(1.1, Enum.EasingStyle.Exponential), {
-			Position = UDim2.new(0, 0, 40, 0)
-		}):Play()
-
 		TweenService:Create(title, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
 			TextTransparency = 1
 		}):Play()
