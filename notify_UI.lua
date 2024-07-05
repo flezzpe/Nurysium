@@ -118,7 +118,7 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 		}):Play()
 
 		TweenService:Create(UIScale, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
-			Scale = 1.2
+			Scale = 0
 		}):Play()
 
 		Debris:AddItem(background, 1)
