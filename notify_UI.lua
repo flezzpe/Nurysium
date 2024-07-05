@@ -109,9 +109,11 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 	task.delay(draw_time, function()
 		notify_lib.notify_count -= 1
 
-		TweenService:Create(title, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
-			TextTransparency = 1
-		}):Play()
+		task.delay(1, function()
+			TweenService:Create(title, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
+					TextTransparency = 1
+				}):Play()
+		end)
 
 		TweenService:Create(UIScale, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
 			Scale = 0
