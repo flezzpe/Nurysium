@@ -1,10 +1,10 @@
-local version = '0.3.0'
+local version = '1.0'
 
-print('nurysium llc. - https://dsc.gg/nurysium')
+print('nurysium llc [revived]. - https://dsc.gg/nurysium')
 print(version)
-warn('use new version...')
+warn('brought back to life by thectkhoster [discord - asynclol.]')
 
-setfpscap(165)
+setfpscap(30)
 
 local Stats = game:GetService('Stats')
 local Players = game:GetService('Players')
