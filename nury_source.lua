@@ -12,7 +12,7 @@ local RunService = game:GetService('RunService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local TweenService = game:GetService('TweenService')
 
-local Nurysium_Util = loadstring(game:HttpGet('https://raw.githubusercontent.com/flezzpe/Nurysium/main/nurysium_helper.lua'))()
+local Nurysium_Util = loadstring(game:HttpGet('https://raw.githubusercontent.com/TheCtkHoster/Nurysium/main/nurysium_helper.lua'))()
 
 local local_player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
@@ -39,11 +39,11 @@ local Services = {
 	game:GetService('SocialService')
 }
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/flezzpe/Nurysium/main/nurysium_ui.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/TheCtkHoster/Nurysium/main/nurysium_ui.lua"))()
 task.wait(0.5)
 
 --// Yes, you can rename, I don't mind 🌠
-library:init("Free Version", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
+library:init("Free Version [revived]", game:GetService("UserInputService").TouchEnabled, game:GetService("CoreGui"))
 
 library:create_section("Combat", 17440545793)
 library:create_section("World", 17440865331)
