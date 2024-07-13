@@ -12,14 +12,8 @@ local ui_data = {
 }
 
 local color_shader = Instance.new("ColorCorrectionEffect", workspace.CurrentCamera)
-local blur_shader = Instance.new("BlurEffect", workspace.CurrentCamera)
 
 local is_Mobile = game:GetService("UserInputService").TouchEnabled
-
-if not is_Mobile then
-	blur_shader.Size = 256
-	color_shader.Saturation = -1
-end
 
 local function animate_elements(speed: number)
 	ui.Background["functions_frame"].UIListLayout.Padding = UDim.new(0.45, 0)
@@ -32,10 +26,6 @@ end
 function nurysium: open()
 	tween_service:Create(color_shader, TweenInfo.new(1.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		Saturation = -1
-	}):Play()
-
-	tween_service:Create(blur_shader, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-		Size = 256
 	}):Play()
 
 	task.delay(0.65, function()
@@ -63,10 +53,6 @@ end
 function nurysium: close()
 	tween_service:Create(color_shader, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
 		Saturation = 0
-	}):Play()
-
-	tween_service:Create(blur_shader, TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut), {
-		Size = 0
 	}):Play()
 
 	task.delay(0.35, function()
