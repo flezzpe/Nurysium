@@ -9,7 +9,7 @@ local notify_lib = {
 
 function notify_lib.init()
 	notify_lib.notify.Name = "notify"
-	notify_lib.notify.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	notify_lib.notify.Parent = game.CoreGui
 
 	local notify_list = Instance.new("Frame")
 	local UIListLayout = Instance.new("UIListLayout")
