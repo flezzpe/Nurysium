@@ -9,7 +9,7 @@ local notify_lib = {
 
 function notify_lib.init()
 	notify_lib.notify.Name = "notify"
-	notify_lib.notify.Parent = game:GetService('CoreGui')
+	notify_lib.notify.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 	local notify_list = Instance.new("Frame")
 	local UIListLayout = Instance.new("UIListLayout")
@@ -42,7 +42,7 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 			end
 		end
 		
-		notify_lib.notify_count = 0
+		notify_lib.notify_count = 1
 	end
 
 	local background = Instance.new("Frame")
@@ -51,19 +51,19 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 	local line = Instance.new("Frame")
 	local UICorner_2 = Instance.new("UICorner")
 	local icon = Instance.new("ImageLabel")
-	local UIStroke = Instance.new("UIStroke")
 	local UIScale = Instance.new("UIScale")
 
 	background.Name = "background"
 	background.Parent = notify_lib.notify.notify_list
 	background.AnchorPoint = Vector2.new(0.5, 0.5)
-	background.BackgroundColor3 = Color3.fromRGB(10, 12, 13)
+	background.BackgroundColor3 = Color3.fromRGB(30, 26, 39)
+	background.BackgroundTransparency = 1
 	background.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	background.BorderSizePixel = 0
 	background.Position = UDim2.new(0, 0, 0, 0)
-	background.Size = UDim2.new(0, 130, 0, 33)
+	background.Size = UDim2.new(0, 0, 0, 33)
 
-	UICorner.CornerRadius = UDim.new(0.3, 0)
+	UICorner.CornerRadius = UDim.new(0.25, 0)
 	UICorner.Parent = background
 
 	title.Name = "title"
@@ -77,49 +77,49 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 	title.Font = Enum.Font.GothamBold
 	title.Text = text
 	title.TextColor3 = Color3.fromRGB(255, 255, 255)
-	title.TextSize = 16.000
+	title.TextSize = 15
 	title.TextWrapped = true
 	title.TextTransparency = 1
 
-	UIStroke.Parent = background
-	UIStroke.Color = Color3.fromRGB(48, 48, 48)
-	UIStroke.Transparency = 0.180
-
 	UIScale.Parent = background
-	UIScale.Scale = 2
+	UIScale.Scale = 1
 
 	local text_size = TextService:GetTextSize(title.Text, title.TextSize, title.Font, Vector2.new(1000, title.TextSize))
 
-	TweenService:Create(title, TweenInfo.new(5, Enum.EasingStyle.Exponential), {
-		TextTransparency = 0
-	}):Play()
+	title.Size = UDim2.new(0, text_size.X, 0, 21)
+	
+	task.delay(0.4, function()
+		TweenService:Create(title, TweenInfo.new(1, Enum.EasingStyle.Back), {
+			TextTransparency = 0
+		}):Play()
+	end)
 
-	TweenService:Create(title, TweenInfo.new(0.4, Enum.EasingStyle.Exponential), {
-		Size = UDim2.new(0, text_size.X, 0, 21)
-	}):Play()
-
-	TweenService:Create(background, TweenInfo.new(2, Enum.EasingStyle.Exponential), {
+	TweenService:Create(background, TweenInfo.new(1.5, Enum.EasingStyle.Exponential), {
 		Size = UDim2.new(0, text_size.X + 65, 0, 33)
 	}):Play()
-
-	TweenService:Create(UIScale, TweenInfo.new(2, Enum.EasingStyle.Exponential), {
-		Scale = 1.3
+	
+	TweenService:Create(background, TweenInfo.new(0.6, Enum.EasingStyle.Back), {
+		Transparency = 0.1
 	}):Play()
 
 	task.delay(draw_time, function()
-		notify_lib.notify_count -= 1
+		TweenService:Create(title, TweenInfo.new(0.4, Enum.EasingStyle.Back), {
+			TextTransparency = 1
+		}):Play()
+		
+		TweenService:Create(background, TweenInfo.new(0.6, Enum.EasingStyle.Back), {
+			Transparency = 1
+		}):Play()
 
-		task.delay(1, function()
-			TweenService:Create(title, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
-					TextTransparency = 1
-				}):Play()
-		end)
-
-		TweenService:Create(UIScale, TweenInfo.new(1, Enum.EasingStyle.Exponential), {
+		TweenService:Create(UIScale, TweenInfo.new(1.5, Enum.EasingStyle.Exponential), {
 			Scale = 0
 		}):Play()
 
-		Debris:AddItem(background, 1)
+		Debris:AddItem(background, 1.5)
+		
+		task.wait(1)
+		
+		notify_lib.notify_count -= 1
 	end)
 end
 
