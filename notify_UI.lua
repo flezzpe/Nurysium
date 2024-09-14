@@ -56,8 +56,8 @@ function notify_lib.draw_notify(text: string, draw_time: number)
 	background.Name = "background"
 	background.Parent = notify_lib.notify.notify_list
 	background.AnchorPoint = Vector2.new(0.5, 0.5)
-	background.BackgroundColor3 = Color3.fromRGB(30, 26, 39)
-	background.BackgroundTransparency = 1
+	background.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
+	background.BackgroundTransparency = 0.9
 	background.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	background.BorderSizePixel = 0
 	background.Position = UDim2.new(0, 0, 0, 0)
